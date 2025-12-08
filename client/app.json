@@ -28,6 +28,10 @@
 				"ACCESS_FINE_LOCATION",
 				"ACCESS_COARSE_LOCATION",
 				"android.permission.ACCESS_COARSE_LOCATION",
+				"android.permission.ACCESS_FINE_LOCATION",
+				"ACCESS_FINE_LOCATION",
+				"ACCESS_COARSE_LOCATION",
+				"android.permission.ACCESS_COARSE_LOCATION",
 				"android.permission.ACCESS_FINE_LOCATION"
 			],
 			"package": "com.kharthic.client"
@@ -41,14 +45,6 @@
 				{
 					"locationAlwaysAndWhenInUsePermission": "Allow AgroLens to use your location to show your current city for better agricultural recommendations."
 				}
-			],
-			[
-				"expo-build-properties",
-				{
-					"android": {
-						"kotlinVersion": "1.7.20"
-					}
-				}
 			]
 		],
 		"owner": "kharthic",
@@ -56,6 +52,12 @@
 			"eas": {
 				"projectId": "0192fb05-0a2a-41a3-b85e-d7b3ee215f19"
 			}
+		},
+		"runtimeVersion": {
+			"policy": "appVersion"
+		},
+		"updates": {
+			"url": "https://u.expo.dev/0192fb05-0a2a-41a3-b85e-d7b3ee215f19"
 		}
 	}
 }
