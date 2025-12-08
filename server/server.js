@@ -10,19 +10,10 @@ dotenv.config()
 const app = express();
 
 app.use(cors({
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     origin: ["http://192.168.1.41:3000", "http://localhost:3000", "exp://192.168.1.41:8081"],
-=======
     origin: ["http://localhost:5000", "exp://192.168.1.41:8081"],
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
     origin: ["http://localhost:5000", "exp://192.168.1.41:8081"],
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
     origin: ["http://localhost:5000", "exp://192.168.1.41:8081"],
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
     allowedHeaders: ["Authorization", "Content-Type"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
 }))

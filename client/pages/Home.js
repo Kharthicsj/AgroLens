@@ -12,16 +12,7 @@ import * as Location from 'expo-location';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { userAPI } from '../services/api';
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { authUtils } from '../utils/auth';
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 
 const Home = ({ onNavigateToPage }) => {
 	const { user } = useAuth();
@@ -36,9 +27,6 @@ const Home = ({ onNavigateToPage }) => {
 			// Request permission to access location
 			const { status } = await Location.requestForegroundPermissionsAsync();
 			if (status !== 'granted') {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 				// Silently handle permission denial - location is optional
 				setLocationLoading(false);
 				setCurrentLocation('Location not available');
@@ -46,28 +34,6 @@ const Home = ({ onNavigateToPage }) => {
 			}
 
 			// Get current position with timeout
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-				Alert.alert(
-					'Permission Denied',
-					'Location permission is required to show your current city.',
-					[{ text: 'OK' }]
-				);
-				setLocationLoading(false);
-				return;
-			}
-
-			// Get current position
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 			const location = await Location.getCurrentPositionAsync({
 				accuracy: Location.Accuracy.Balanced,
 			});
@@ -83,29 +49,8 @@ const Home = ({ onNavigateToPage }) => {
 				setCurrentLocation(cityName);
 			}
 		} catch (error) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 			// Silently handle location errors - location is optional
 			setCurrentLocation('Location not available');
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-			console.error('Error getting location:', error);
-			Alert.alert(
-				'Location Error',
-				'Unable to fetch your current location. Please try again.',
-				[{ text: 'OK' }]
-			);
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 		} finally {
 			setLocationLoading(false);
 		}
@@ -114,42 +59,18 @@ const Home = ({ onNavigateToPage }) => {
 	// Fetch user data from API
 	const fetchUserData = async () => {
 		try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 			// Only fetch if user is authenticated
 			const token = await authUtils.getToken();
 			if (!token) {
 				return;
 			}
 
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 			const response = await userAPI.fetchUserData();
 			if (response.success) {
 				setUserDetails(response.userData);
 			}
 		} catch (err) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 			// Silently fail and use context user data
-=======
-			console.error('Error fetching user data:', err);
-			// Fallback to context user data if API fails
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-			console.error('Error fetching user data:', err);
-			// Fallback to context user data if API fails
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-			console.error('Error fetching user data:', err);
-			// Fallback to context user data if API fails
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 		}
 	};
 
@@ -163,19 +84,7 @@ const Home = ({ onNavigateToPage }) => {
 	const displayUser = userDetails || user;
 
 	const FeatureCard = ({ icon, title, description, color, onPress }) => (
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 		<TouchableOpacity
-=======
-		<TouchableOpacity 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-		<TouchableOpacity 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-		<TouchableOpacity 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 			style={{
 				backgroundColor: colors.surface,
 				borderRadius: 16,
@@ -219,23 +128,8 @@ const Home = ({ onNavigateToPage }) => {
 				colors={colors.background}
 				style={{ flex: 1 }}
 			>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 				<ScrollView
 					style={{ flex: 1 }}
-=======
-				<ScrollView 
-					style={{ flex: 1 }} 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-				<ScrollView 
-					style={{ flex: 1 }} 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-				<ScrollView 
-					style={{ flex: 1 }} 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 					contentContainerStyle={{ padding: 24, paddingBottom: 100 }}
 					showsVerticalScrollIndicator={false}
 				>
@@ -260,27 +154,9 @@ const Home = ({ onNavigateToPage }) => {
 
 						{/* User current location */}
 						{locationLoading ? (
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 							<View style={{
 								flexDirection: 'row',
 								alignItems: 'center',
-=======
-							<View style={{ 
-								flexDirection: 'row', 
-								alignItems: 'center', 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-							<View style={{ 
-								flexDirection: 'row', 
-								alignItems: 'center', 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-							<View style={{ 
-								flexDirection: 'row', 
-								alignItems: 'center', 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 								marginTop: 12,
 								backgroundColor: colors.surface,
 								borderRadius: 8,
@@ -297,27 +173,9 @@ const Home = ({ onNavigateToPage }) => {
 								</Text>
 							</View>
 						) : currentLocation ? (
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 							<View style={{
 								flexDirection: 'row',
 								alignItems: 'center',
-=======
-							<View style={{ 
-								flexDirection: 'row', 
-								alignItems: 'center', 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-							<View style={{ 
-								flexDirection: 'row', 
-								alignItems: 'center', 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-							<View style={{ 
-								flexDirection: 'row', 
-								alignItems: 'center', 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 								marginTop: 12,
 								backgroundColor: colors.surface,
 								borderRadius: 8,
@@ -359,16 +217,7 @@ const Home = ({ onNavigateToPage }) => {
 						title="Fertilizer Recommendation"
 						description="Receive precise fertilizer recommendations tailored to your crop requirements"
 						color="#3498db"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 						onPress={() => onNavigateToPage && onNavigateToPage('FertilizerRecommendation')}
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 					/>
 
 					<FeatureCard

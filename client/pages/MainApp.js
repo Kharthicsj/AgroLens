@@ -3,16 +3,7 @@ import { View } from 'react-native';
 import Home from '../pages/Home';
 import UserProfile from '../pages/UserProfile';
 import CropRecommendation from '../pages/CropRecommendation';
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 import FertilizerRecommendation from '../pages/FertilizerRecommendation';
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 import TabNavigator from '../components/TabNavigator';
 import Header from '../components/Header';
 import { useTheme } from '../context/ThemeContext';
@@ -44,17 +35,8 @@ const MainApp = () => {
 				return <UserProfile />;
 			case 'CropRecommendation':
 				return <CropRecommendation onBackPress={handleBackToHome} />;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 			case 'FertilizerRecommendation':
 				return <FertilizerRecommendation onBackPress={handleBackToHome} />;
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 			default:
 				return <Home onNavigateToPage={handleNavigateToPage} />;
 		}
@@ -62,9 +44,6 @@ const MainApp = () => {
 
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.background[0] }}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 			{currentPage !== 'CropRecommendation' && currentPage !== 'FertilizerRecommendation' && <Header />}
 			<View style={{ flex: 1 }}>
 				{renderCurrentScreen()}
@@ -73,26 +52,6 @@ const MainApp = () => {
 				<TabNavigator
 					currentTab={currentTab}
 					onTabPress={handleTabPress}
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-			{currentPage !== 'CropRecommendation' && <Header />}
-			<View style={{ flex: 1 }}>
-				{renderCurrentScreen()}
-			</View>
-			{currentPage !== 'CropRecommendation' && (
-				<TabNavigator 
-					currentTab={currentTab} 
-					onTabPress={handleTabPress} 
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 				/>
 			)}
 		</View>

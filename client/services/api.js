@@ -31,32 +31,7 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     // Silently handle errors - they'll be caught by the calling code
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-    if (error.response) {
-      // Server responded with error status
-      console.log('API Error Response:', error.response.data);
-    } else if (error.request) {
-      // Request was made but no response received
-      console.log('API No Response:', error.request);
-    } else {
-      // Something else happened
-      console.log('API Error:', error.message);
-    }
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
     return Promise.reject(error);
   }
 );
@@ -107,9 +82,6 @@ export const userAPI = {
   },
 };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Fertilizer recommendations API
 export const fertilizerAPI = {
   list: async (params = {}) => {
@@ -140,10 +112,4 @@ export const fertilizerAPI = {
   }
 };
 
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 export default api;

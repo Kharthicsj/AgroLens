@@ -1,59 +1,23 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 import React, { useEffect, useMemo, useState } from 'react';
-=======
-import React, { useState } from 'react';
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-import React, { useState } from 'react';
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-import React, { useState } from 'react';
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 import {
 	View,
 	Text,
 	ScrollView,
 	TouchableOpacity,
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 	Modal,
 	ActivityIndicator,
 	TextInput
-=======
-	Modal
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-	Modal
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-	Modal
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { fertilizerAPI } from '../services/api';
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 
 const CropRecommendation = ({ onBackPress }) => {
 	const { user } = useAuth();
 	const { colors } = useTheme();
 	const [selectedLocation, setSelectedLocation] = useState('Coimbatore');
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 	const [selectedSoil, setSelectedSoil] = useState('Red Sand');
 	const [recommendations, setRecommendations] = useState([]);
 	const [districts, setDistricts] = useState([]);
@@ -169,57 +133,18 @@ const CropRecommendation = ({ onBackPress }) => {
 		return locations.filter(loc => loc.toLowerCase().includes(query));
 	}, [locations, searchQuery]);
 
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-	const [showLocationModal, setShowLocationModal] = useState(false);
-
-	const locations = ['Coimbatore', 'Erode', 'Salem', 'Madurai'];
-
-	const handleLocationSelect = (location) => {
-		setSelectedLocation(location);
-		setShowLocationModal(false);
-	};
-
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.background[0] }}>
 			<LinearGradient
 				colors={colors.background}
 				style={{ flex: 1 }}
 			>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 				<ScrollView
 					style={{ flex: 1 }}
-=======
-				<ScrollView 
-					style={{ flex: 1 }} 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-				<ScrollView 
-					style={{ flex: 1 }} 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-				<ScrollView 
-					style={{ flex: 1 }} 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 					contentContainerStyle={{ padding: 24, paddingBottom: 100 }}
 					showsVerticalScrollIndicator={false}
 				>
 					{/* Header Section with Back Button */}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 					<View style={{
 						flexDirection: 'row',
 						alignItems: 'center',
@@ -227,25 +152,6 @@ const CropRecommendation = ({ onBackPress }) => {
 						marginTop: 10
 					}}>
 						<TouchableOpacity
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-					<View style={{ 
-						flexDirection: 'row', 
-						alignItems: 'center', 
-						marginBottom: 24,
-						marginTop: 10
-					}}>
-						<TouchableOpacity 
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 							onPress={onBackPress}
 							style={{
 								backgroundColor: colors.surface,
@@ -277,29 +183,10 @@ const CropRecommendation = ({ onBackPress }) => {
 						}}>
 							Select Your Location
 						</Text>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 						<TouchableOpacity
 							style={{
 								flexDirection: 'row',
 								alignItems: 'center',
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-						<TouchableOpacity 
-							style={{ 
-								flexDirection: 'row', 
-								alignItems: 'center', 
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 								justifyContent: 'space-between',
 								borderRadius: 16,
 								padding: 18,
@@ -323,38 +210,14 @@ const CropRecommendation = ({ onBackPress }) => {
 										fontSize: 12,
 										marginBottom: 2
 									}}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 										Current Location ({districts.length} districts available)
-=======
-										Current Location
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-										Current Location
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-										Current Location
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 									</Text>
 									<Text style={{
 										color: colors.text,
 										fontSize: 16,
 										fontWeight: '600'
 									}}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 										{selectedLocation || (loading ? 'Loading...' : 'Select a location')}
-=======
-										{selectedLocation}
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-										{selectedLocation}
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-										{selectedLocation}
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 									</Text>
 								</View>
 							</View>
@@ -362,9 +225,6 @@ const CropRecommendation = ({ onBackPress }) => {
 						</TouchableOpacity>
 					</View>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 					{/* Soil Selection Section */}
 					{soilTypes.length > 0 && (
 						<View style={{ marginBottom: 20 }}>
@@ -468,23 +328,6 @@ const CropRecommendation = ({ onBackPress }) => {
 						<>
 							{/* Location Info Header */}
 							<View style={{
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-					{/* Welcome Section */}
-					{selectedLocation === 'Coimbatore' && (
-						<>
-							{/* Location Info Header */}
-							<View style={{ 
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 								borderRadius: 20,
 								padding: 24,
 								marginBottom: 24,
@@ -511,38 +354,14 @@ const CropRecommendation = ({ onBackPress }) => {
 											color: colors.textSecondary,
 											lineHeight: 20
 										}}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 											{filteredRecommendations.length} recommendation(s) available
-=======
-											Comprehensive crop recommendations based on local conditions
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-											Comprehensive crop recommendations based on local conditions
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-											Comprehensive crop recommendations based on local conditions
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 										</Text>
 									</View>
 								</View>
 							</View>
 
 							{/* Soil Type Section */}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 							<View style={{
-=======
-							<View style={{ 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-							<View style={{ 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-							<View style={{ 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 								borderRadius: 20,
 								padding: 24,
 								marginBottom: 20,
@@ -560,9 +379,6 @@ const CropRecommendation = ({ onBackPress }) => {
 										fontWeight: '700',
 										color: colors.text
 									}}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 										Soil Types in your Area
 									</Text>
 								</View>
@@ -593,125 +409,11 @@ const CropRecommendation = ({ onBackPress }) => {
 											</View>
 										);
 									})}
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-										Soil Types
-									</Text>
-								</View>
-								<View style={{ 
-									flexDirection: 'row', 
-									justifyContent: 'space-between',
-									alignItems: 'center',
-									gap: 12
-								}}>
-									<View style={{
-										borderRadius: 12,
-										paddingHorizontal: 20,
-										paddingVertical: 12,
-										flex: 1,
-										alignItems: 'center',
-										borderWidth: 2,
-										borderColor: '#ff6b35'
-									}}>
-										<Text style={{
-											fontSize: 16,
-											color: colors.text,
-											fontWeight: '600'
-										}}>
-											Red Loamy
-										</Text>
-									</View>
-									<View style={{
-										borderRadius: 12,
-										paddingHorizontal: 20,
-										paddingVertical: 12,
-										flex: 1,
-										alignItems: 'center',
-										borderWidth: 2,
-										borderColor: '#2c3e50'
-									}}>
-										<Text style={{
-											fontSize: 16,
-											color: colors.text,
-											fontWeight: '600'
-										}}>
-											Black Soil
-										</Text>
-									</View>
-								</View>
-							</View>
-
-							{/* Rainfall Section */}
-							<View style={{ 
-								borderRadius: 20,
-								padding: 24,
-								marginBottom: 20,
-								borderWidth: 1,
-								borderColor: '#00bcd440'
-							}}>
-								<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-									<View style={{
-										marginRight: 16
-									}}>
-										<Ionicons name="water" size={26} color="#00bcd4" />
-									</View>
-									<Text style={{
-										fontSize: 20,
-										fontWeight: '700',
-										color: colors.text
-									}}>
-										Typical Rainfall
-									</Text>
-								</View>
-								<View style={{ 
-									borderRadius: 16,
-									padding: 20,
-									alignItems: 'center',
-									borderWidth: 2,
-									borderColor: '#00bcd4'
-								}}>
-									<Text style={{
-										fontSize: 48,
-										fontWeight: '800',
-										color: "#00bcd4",
-										marginBottom: 4
-									}}>
-										71.5
-									</Text>
-									<Text style={{
-										fontSize: 18,
-										color: colors.text,
-										fontWeight: '600'
-									}}>
-										mm/year
-									</Text>
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 								</View>
 							</View>
 
 							{/* Recommended Crops Section */}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 							<View style={{
-=======
-							<View style={{ 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-							<View style={{ 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-							<View style={{ 
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 								borderRadius: 20,
 								padding: 24,
 								marginBottom: 24,
@@ -732,9 +434,6 @@ const CropRecommendation = ({ onBackPress }) => {
 										Recommended Crops
 									</Text>
 								</View>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 								<View style={{
 									flexDirection: 'row',
@@ -745,33 +444,6 @@ const CropRecommendation = ({ onBackPress }) => {
 										<Text style={{ color: colors.textSecondary }}>No crops listed.</Text>
 									)}
 									{recommendedCrops.map((crop, index) => (
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-								
-								<View style={{ 
-									flexDirection: 'row', 
-									flexWrap: 'wrap', 
-									justifyContent: 'space-between'
-								}}>
-									{[
-										{ name: 'Groundnut', icon: 'nutrition', color: '#ff9800' },
-										{ name: 'Cotton', icon: 'flower', color: '#e91e63' },
-										{ name: 'Sugarcane', icon: 'leaf-outline', color: '#4caf50' },
-										{ name: 'Coconut', icon: 'ellipse', color: '#795548' },
-										{ name: 'Banana', icon: 'nutrition-outline', color: '#ffeb3b' },
-										{ name: 'Tomato', icon: 'radio-button-on', color: '#f44336' },
-										{ name: 'Mango', icon: 'leaf', color: '#ff5722' }
-									].map((crop, index) => (
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 										<View key={index} style={{
 											borderRadius: 16,
 											padding: 16,
@@ -780,36 +452,12 @@ const CropRecommendation = ({ onBackPress }) => {
 											marginBottom: 12,
 											width: '47%',
 											borderWidth: 2,
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 											borderColor: '#4caf50'
-=======
-											borderColor: crop.color
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-											borderColor: crop.color
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-											borderColor: crop.color
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 										}}>
 											<View style={{
 												marginRight: 12
 											}}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 												<Ionicons name="leaf" size={20} color="#4caf50" />
-=======
-												<Ionicons name={crop.icon} size={20} color={crop.color} />
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-												<Ionicons name={crop.icon} size={20} color={crop.color} />
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-												<Ionicons name={crop.icon} size={20} color={crop.color} />
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 											</View>
 											<Text style={{
 												fontSize: 14,
@@ -817,78 +465,16 @@ const CropRecommendation = ({ onBackPress }) => {
 												fontWeight: '600',
 												flex: 1
 											}}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 												{crop}
-=======
-												{crop.name}
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-												{crop.name}
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
-												{crop.name}
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 											</Text>
 										</View>
 									))}
 								</View>
 							</View>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 						</>
 					)}
 
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-						</>
-					)}
-
-					{/* Default message for other locations */}
-					{selectedLocation !== 'Coimbatore' && (
-						<View style={{
-							borderRadius: 16,
-							padding: 24,
-							marginBottom: 16,
-							alignItems: 'center',
-							borderWidth: 1,
-							borderColor: colors.textSecondary + '40'
-						}}>
-							<Ionicons name="construct-outline" size={48} color={colors.textSecondary} />
-							<Text style={{
-								fontSize: 18,
-								fontWeight: '600',
-								color: colors.text,
-								marginTop: 16,
-								marginBottom: 8,
-								textAlign: 'center'
-							}}>
-								Coming Soon for {selectedLocation}
-							</Text>
-							<Text style={{
-								fontSize: 14,
-								color: colors.textSecondary,
-								textAlign: 'center',
-								lineHeight: 20
-							}}>
-								Crop recommendations for {selectedLocation} are being developed. Please check back soon!
-							</Text>
-						</View>
-					)}
-
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 
 				</ScrollView>
 
@@ -968,9 +554,6 @@ const CropRecommendation = ({ onBackPress }) => {
 									Select your city for personalized recommendations
 								</Text>
 							</View>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 							{/* Search Bar */}
 							<View style={{
@@ -1088,75 +671,6 @@ const CropRecommendation = ({ onBackPress }) => {
 								</View>
 							</ScrollView>
 
-=======
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-							
-							{/* Location Options */}
-							<View style={{ 
-								paddingVertical: 8,
-								backgroundColor: '#2a2d3a' 
-							}}>
-								{locations.map((location, index) => (
-									<TouchableOpacity
-										key={index}
-										style={{
-											flexDirection: 'row',
-											alignItems: 'center',
-											justifyContent: 'space-between',
-											paddingVertical: 18,
-											paddingHorizontal: 24,
-											backgroundColor: selectedLocation === location ? '#667eea' : 'transparent',
-											marginHorizontal: 12,
-											marginVertical: 2,
-											borderRadius: 12
-										}}
-										onPress={() => handleLocationSelect(location)}
-										activeOpacity={0.7}
-									>
-										<View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-											<View style={{
-												backgroundColor: selectedLocation === location ? 'rgba(255,255,255,0.2)' : '#3a3d4a',
-												borderRadius: 8,
-												padding: 8,
-												marginRight: 12
-											}}>
-												<Ionicons 
-													name="business" 
-													size={16} 
-													color={selectedLocation === location ? '#fff' : 'rgba(255,255,255,0.7)'} 
-												/>
-											</View>
-											<Text style={{
-												fontSize: 16,
-												color: selectedLocation === location ? '#fff' : 'rgba(255,255,255,0.9)',
-												fontWeight: selectedLocation === location ? '600' : '500'
-											}}>
-												{location}
-											</Text>
-										</View>
-										{selectedLocation === location && (
-											<View style={{
-												backgroundColor: 'rgba(255,255,255,0.2)',
-												borderRadius: 12,
-												padding: 4
-											}}>
-												<Ionicons name="checkmark" size={16} color="#fff" />
-											</View>
-										)}
-									</TouchableOpacity>
-								))}
-							</View>
-							
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
 							{/* Modal Footer */}
 							<View style={{
 								backgroundColor: '#2a2d3a',
