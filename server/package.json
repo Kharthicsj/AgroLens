@@ -14,16 +14,7 @@
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     "csv-parse": "^6.1.0",
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
-=======
->>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
