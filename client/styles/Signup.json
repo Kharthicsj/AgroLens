@@ -1,0 +1,123 @@
+{
+  "container": {
+    "flex": 1
+  },
+  "backgroundGradient": {
+    "flex": 1
+  },
+  "scrollContainer": {
+    "flexGrow": 1,
+    "justifyContent": "flex-start",
+    "padding": 24,
+    "paddingTop": 20,
+    "paddingBottom": 60
+  },
+  "formContainer": {
+    "backgroundColor": "rgba(30, 30, 60, 0.9)",
+    "borderRadius": 24,
+    "padding": 32,
+    "marginHorizontal": 8,
+    "borderWidth": 1,
+    "borderColor": "rgba(255, 255, 255, 0.1)"
+  },
+  "title": {
+    "fontSize": 32,
+    "fontWeight": "800",
+    "textAlign": "center",
+    "marginBottom": 8,
+    "color": "#ffffff",
+    "letterSpacing": -0.5
+  },
+  "subtitle": {
+    "fontSize": 16,
+    "textAlign": "center",
+    "marginBottom": 36,
+    "color": "rgba(255, 255, 255, 0.7)",
+    "fontWeight": "500"
+  },
+  "inputContainer": {
+    "marginBottom": 24
+  },
+  "label": {
+    "fontSize": 16,
+    "fontWeight": "600",
+    "marginBottom": 12,
+    "color": "#ffffff",
+    "letterSpacing": 0.2
+  },
+  "input": {
+    "borderWidth": 2,
+    "borderColor": "rgba(255, 255, 255, 0.2)",
+    "borderRadius": 16,
+    "paddingVertical": 12,
+    "paddingHorizontal": 16,
+    "fontSize": 16,
+    "backgroundColor": "rgba(255, 255, 255, 0.05)",
+    "color": "#ffffff",
+    "fontWeight": "500",
+    "minHeight": 52
+  },
+  "buttonContainer": {
+    "borderRadius": 16,
+    "marginTop": 16,
+    "overflow": "hidden"
+  },
+  "button": {
+    "borderRadius": 16,
+    "overflow": "hidden"
+  },
+  "buttonGradient": {
+    "paddingVertical": 18,
+    "paddingHorizontal": 24,
+    "alignItems": "center",
+    "justifyContent": "center",
+    "minHeight": 56
+  },
+  "buttonDisabled": {
+    "opacity": 0.6,
+    "shadowOpacity": 0.1
+  },
+  "buttonText": {
+    "color": "#ffffff",
+    "fontSize": 18,
+    "fontWeight": "700",
+    "letterSpacing": 0.5,
+    "textAlign": "center"
+  },
+  "signinContainer": {
+    "flexDirection": "row",
+    "justifyContent": "center",
+    "marginTop": 32,
+    "paddingTop": 24,
+    "borderTopWidth": 1,
+    "borderTopColor": "rgba(255, 255, 255, 0.1)"
+  },
+  "signinText": {
+    "fontSize": 16,
+    "color": "rgba(255, 255, 255, 0.7)",
+    "fontWeight": "500"
+  },
+  "signinLink": {
+    "fontSize": 16,
+    "color": "#764ba2",
+    "fontWeight": "700"
+  },
+  "decorativeCircle1": {
+    "position": "absolute",
+    "width": 180,
+    "height": 180,
+    "borderRadius": 90,
+    "backgroundColor": "rgba(118, 75, 162, 0.1)",
+    "top": -90,
+    "left": -40
+  },
+  "decorativeCircle2": {
+    "position": "absolute",
+    "width": 120,
+    "height": 120,
+    "borderRadius": 60,
+    "backgroundColor": "rgba(102, 126, 234, 0.1)",
+    "bottom": -60,
+    "right": -20
+  }
+}

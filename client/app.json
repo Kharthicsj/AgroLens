@@ -1,0 +1,92 @@
+{
+  "expo": {
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+    "name": "AgroLens",
+=======
+    "name": "client",
+>>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
+=======
+    "name": "client",
+>>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
+=======
+    "name": "client",
+>>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
+    "slug": "client",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app uses location to show your current city for better agricultural recommendations."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+        "ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "package": "com.kharthic.client"
+=======
+        "ACCESS_COARSE_LOCATION"
+      ]
+>>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
+=======
+        "ACCESS_COARSE_LOCATION"
+      ]
+>>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
+=======
+        "ACCESS_COARSE_LOCATION"
+      ]
+>>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow AgroLens to use your location to show your current city for better agricultural recommendations."
+        }
+      ]
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+    ],
+    "owner": "kharthic",
+    "extra": {
+      "eas": {
+        "projectId": "9c92e8b8-01fa-4c96-a045-b5f698fd5ce7"
+      }
+    }
+=======
+    ]
+>>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
+=======
+    ]
+>>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
+=======
+    ]
+>>>>>>> 502f3d24e98042d3fd45ef530d41bbec5f6ba10f
+  }
+}
