@@ -41,12 +41,20 @@
 				{
 					"locationAlwaysAndWhenInUsePermission": "Allow AgroLens to use your location to show your current city for better agricultural recommendations."
 				}
+			],
+			[
+				"expo-build-properties",
+				{
+					"android": {
+						"kotlinVersion": "1.8.0"
+					}
+				}
 			]
 		],
 		"owner": "kharthic",
 		"extra": {
 			"eas": {
-				"projectId": "9c92e8b8-01fa-4c96-a045-b5f698fd5ce7"
+				"projectId": "0192fb05-0a2a-41a3-b85e-d7b3ee215f19"
 			}
 		}
 	}
