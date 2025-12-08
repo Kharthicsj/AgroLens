@@ -8,12 +8,8 @@ buildscript {
   dependencies {
     classpath('com.android.tools.build:gradle')
     classpath('com.facebook.react:react-native-gradle-plugin')
-    classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+    classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0')
   }
-}
-
-ext {
-  kotlin_version = '1.8.0'
 }
 
 def reactNativeAndroidDir = new File(
