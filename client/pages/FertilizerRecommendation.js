@@ -10,7 +10,7 @@ import {
     BackHandler
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from '../components/Icon';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { fertilizerAPI } from '../services/api';
@@ -264,7 +264,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                 marginRight: 16
                             }}
                         >
-                            <Ionicons name="arrow-back" size={24} color={colors.text} />
+                            <Icon name="arrow-back" size={24} color={colors.text} />
                         </TouchableOpacity>
                         <Text style={{
                             fontSize: 24,
@@ -306,7 +306,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                     padding: 8,
                                     marginRight: 12
                                 }}>
-                                    <Ionicons name="location" size={20} color="#667eea" />
+                                    <Icon name="location" size={20} color="#667eea" />
                                 </View>
                                 <View style={{ flex: 1 }}>
                                     <Text style={{
@@ -325,7 +325,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                     </Text>
                                 </View>
                             </View>
-                            <Ionicons name="chevron-down" size={20} color={colors.textSecondary} />
+                            <Icon name="chevron-down" size={20} color={colors.textSecondary} />
                         </TouchableOpacity>
                     </View>
 
@@ -408,7 +408,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                         padding: 8,
                                         marginRight: 12
                                     }}>
-                                        <Ionicons name="leaf" size={20} color="#4caf50" />
+                                        <Icon name="leaf" size={20} color="#4caf50" />
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={{
@@ -420,7 +420,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                         </Text>
                                     </View>
                                 </View>
-                                <Ionicons name="chevron-down" size={20} color={colors.textSecondary} />
+                                <Icon name="chevron-down" size={20} color={colors.textSecondary} />
                             </TouchableOpacity>
                         </View>
                     )}
@@ -459,7 +459,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                             borderColor: '#4caf5040',
                             backgroundColor: '#4caf5010'
                         }}>
-                            <Ionicons name="information-circle-outline" size={48} color="#4caf50" />
+                            <Icon name="information-circle-outline" size={48} color="#4caf50" />
                             <Text style={{
                                 fontSize: 18,
                                 fontWeight: '600',
@@ -490,7 +490,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                             borderWidth: 1,
                             borderColor: colors.textSecondary + '40'
                         }}>
-                            <Ionicons name="flask-outline" size={48} color={colors.textSecondary} />
+                            <Icon name="flask-outline" size={48} color={colors.textSecondary} />
                             <Text style={{
                                 fontSize: 18,
                                 fontWeight: '600',
@@ -527,7 +527,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                     <View style={{
                                         marginRight: 12
                                     }}>
-                                        <Ionicons name="flask" size={24} color="#3498db" />
+                                        <Icon name="flask" size={24} color="#3498db" />
                                     </View>
                                     <Text style={{
                                         fontSize: 20,
@@ -549,7 +549,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                         marginRight: 12,
                                         marginBottom: 4
                                     }}>
-                                        <Ionicons name="leaf" size={14} color="#4caf50" style={{ marginRight: 4 }} />
+                                        <Icon name="leaf" size={14} color="#4caf50" style={{ marginRight: 4 }} />
                                         <Text style={{
                                             fontSize: 14,
                                             color: colors.text,
@@ -564,7 +564,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                         marginRight: 12,
                                         marginBottom: 4
                                     }}>
-                                        <Ionicons name="location" size={14} color="#667eea" style={{ marginRight: 4 }} />
+                                        <Icon name="location" size={14} color="#667eea" style={{ marginRight: 4 }} />
                                         <Text style={{
                                             fontSize: 14,
                                             color: colors.textSecondary
@@ -577,7 +577,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                         alignItems: 'center',
                                         marginBottom: 4
                                     }}>
-                                        <Ionicons name="earth" size={14} color="#ff6b35" style={{ marginRight: 4 }} />
+                                        <Icon name="earth" size={14} color="#ff6b35" style={{ marginRight: 4 }} />
                                         <Text style={{
                                             fontSize: 14,
                                             color: colors.textSecondary
@@ -609,7 +609,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                                     padding: 4,
                                                     marginRight: 8
                                                 }}>
-                                                    <Ionicons name="layers" size={14} color="#3498db" />
+                                                    <Icon name="layers" size={14} color="#3498db" />
                                                 </View>
                                                 <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>
                                                     Basal Application
@@ -639,7 +639,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                                     padding: 4,
                                                     marginRight: 8
                                                 }}>
-                                                    <Ionicons name="arrow-up-circle" size={14} color="#4caf50" />
+                                                    <Icon name="arrow-up-circle" size={14} color="#4caf50" />
                                                 </View>
                                                 <View style={{ flex: 1 }}>
                                                     <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>
@@ -674,7 +674,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                                     padding: 4,
                                                     marginRight: 8
                                                 }}>
-                                                    <Ionicons name="arrow-up-circle" size={14} color="#ff6b35" />
+                                                    <Icon name="arrow-up-circle" size={14} color="#ff6b35" />
                                                 </View>
                                                 <View style={{ flex: 1 }}>
                                                     <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>
@@ -712,7 +712,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                                 borderRadius: 8
                                             }}>
                                                 <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                                                    <Ionicons name="information-circle" size={16} color="#ffc107" style={{ marginRight: 6, marginTop: 2 }} />
+                                                    <Icon name="information-circle" size={16} color="#ffc107" style={{ marginRight: 6, marginTop: 2 }} />
                                                     <Text style={{ color: colors.text, fontSize: 13, flex: 1, lineHeight: 18 }}>
                                                         {item.Notes}
                                                     </Text>
@@ -772,7 +772,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                             padding: 8,
                                             marginRight: 12
                                         }}>
-                                            <Ionicons name="location" size={20} color="#667eea" />
+                                            <Icon name="location" size={20} color="#667eea" />
                                         </View>
                                         <Text style={{
                                             fontSize: 18,
@@ -790,7 +790,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                             padding: 6
                                         }}
                                     >
-                                        <Ionicons name="close" size={16} color="#ffffff" />
+                                        <Icon name="close" size={16} color="#ffffff" />
                                     </TouchableOpacity>
                                 </View>
                                 <Text style={{
@@ -821,7 +821,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                     borderWidth: 1,
                                     borderColor: 'rgba(255,255,255,0.1)'
                                 }}>
-                                    <Ionicons name="search" size={18} color="rgba(255,255,255,0.5)" />
+                                    <Icon name="search" size={18} color="rgba(255,255,255,0.5)" />
                                     <TextInput
                                         style={{
                                             flex: 1,
@@ -838,7 +838,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                     />
                                     {searchQuery.length > 0 && (
                                         <TouchableOpacity onPress={() => setSearchQuery('')}>
-                                            <Ionicons name="close-circle" size={18} color="rgba(255,255,255,0.5)" />
+                                            <Icon name="close-circle" size={18} color="rgba(255,255,255,0.5)" />
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -891,7 +891,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                                     padding: 8,
                                                     marginRight: 12
                                                 }}>
-                                                    <Ionicons
+                                                    <Icon
                                                         name="business"
                                                         size={16}
                                                         color={selectedLocation === location ? '#fff' : 'rgba(255,255,255,0.7)'}
@@ -906,7 +906,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                                 </Text>
                                             </View>
                                             {selectedLocation === location && (
-                                                <Ionicons name="checkmark-circle" size={20} color="#fff" />
+                                                <Icon name="checkmark-circle" size={20} color="#fff" />
                                             )}
                                         </TouchableOpacity>
                                     ))}
@@ -962,7 +962,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                             padding: 8,
                                             marginRight: 12
                                         }}>
-                                            <Ionicons name="leaf" size={20} color="#4caf50" />
+                                            <Icon name="leaf" size={20} color="#4caf50" />
                                         </View>
                                         <Text style={{
                                             fontSize: 18,
@@ -980,7 +980,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                             padding: 6
                                         }}
                                     >
-                                        <Ionicons name="close" size={16} color="#ffffff" />
+                                        <Icon name="close" size={16} color="#ffffff" />
                                     </TouchableOpacity>
                                 </View>
                                 <Text style={{
@@ -1011,7 +1011,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                     borderWidth: 1,
                                     borderColor: 'rgba(255,255,255,0.1)'
                                 }}>
-                                    <Ionicons name="search" size={18} color="rgba(255,255,255,0.5)" />
+                                    <Icon name="search" size={18} color="rgba(255,255,255,0.5)" />
                                     <TextInput
                                         style={{
                                             flex: 1,
@@ -1028,7 +1028,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                     />
                                     {cropSearchQuery.length > 0 && (
                                         <TouchableOpacity onPress={() => setCropSearchQuery('')}>
-                                            <Ionicons name="close-circle" size={18} color="rgba(255,255,255,0.5)" />
+                                            <Icon name="close-circle" size={18} color="rgba(255,255,255,0.5)" />
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -1073,7 +1073,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                                     padding: 8,
                                                     marginRight: 12
                                                 }}>
-                                                    <Ionicons
+                                                    <Icon
                                                         name="leaf"
                                                         size={16}
                                                         color={selectedCrop === crop ? '#fff' : 'rgba(255,255,255,0.7)'}
@@ -1088,7 +1088,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                                 </Text>
                                             </View>
                                             {selectedCrop === crop && (
-                                                <Ionicons name="checkmark-circle" size={20} color="#fff" />
+                                                <Icon name="checkmark-circle" size={20} color="#fff" />
                                             )}
                                         </TouchableOpacity>
                                     ))}

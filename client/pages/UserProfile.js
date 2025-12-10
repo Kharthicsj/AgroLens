@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from '../components/Icon';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -109,7 +109,7 @@ const UserProfile = () => {
 				padding: 8,
 				marginRight: 12
 			}}>
-				<Ionicons name={icon} size={20} color={colors.text} />
+				<Icon name={icon} size={20} color={colors.text} />
 			</View>
 			<View style={{ flex: 1 }}>
 				<Text style={{
@@ -128,7 +128,7 @@ const UserProfile = () => {
 				</Text>
 			</View>
 			{editable && (
-				<Ionicons name="create-outline" size={20} color="#667eea" />
+				<Icon name="create-outline" size={20} color="#667eea" />
 			)}
 		</TouchableOpacity>
 	);
@@ -162,7 +162,7 @@ const UserProfile = () => {
 					colors={colors.background}
 					style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}
 				>
-					<Ionicons name="alert-circle-outline" size={64} color="#e74c3c" />
+					<Icon name="alert-circle-outline" size={64} color="#e74c3c" />
 					<Text style={{
 						color: colors.text,
 						fontSize: 18,
@@ -279,7 +279,7 @@ const UserProfile = () => {
 								marginTop: 16
 							}}
 						>
-							<Ionicons name="create-outline" size={16} color="#667eea" />
+							<Icon name="create-outline" size={16} color="#667eea" />
 							<Text style={{
 								color: '#667eea',
 								fontSize: 14,
@@ -398,7 +398,7 @@ const UserProfile = () => {
 							start={{ x: 0, y: 0 }}
 							end={{ x: 1, y: 1 }}
 						>
-							<Ionicons name="log-out-outline" size={20} color="#ffffff" style={{ marginRight: 8 }} />
+							<Icon name="log-out-outline" size={20} color="#ffffff" style={{ marginRight: 8 }} />
 							<Text style={{
 								color: '#ffffff',
 								fontSize: 18,

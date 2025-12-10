@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker';
+import Icon from '../components/Icon';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { diseaseAPI } from '../services/api';
@@ -109,31 +109,7 @@ const DiseaseDetection = ({ onBackPress }) => {
         );
     };
 
-    const requestPermissions = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert(
-                'Permission Required',
-                'Please grant camera roll permissions to upload images.',
-                [{ text: 'OK' }]
-            );
-            return false;
-        }
-        return true;
-    };
-
-    const requestCameraPermissions = async () => {
-        const { status } = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert(
-                'Camera Permission Required',
-                'Please grant camera permissions to take photos.',
-                [{ text: 'OK' }]
-            );
-            return false;
-        }
-        return true;
-    };
+    // Permissions are handled automatically by react-native-image-picker
 
     const showImageSourceOptions = () => {
         Alert.alert(
@@ -159,19 +135,16 @@ const DiseaseDetection = ({ onBackPress }) => {
 
     const handleTakePhoto = async () => {
         try {
-            const hasPermission = await requestCameraPermissions();
-            if (!hasPermission) return;
-
-            const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ['images'],
-                allowsEditing: true,
-                aspect: [1, 1],
+            const result = await launchCamera({
+                mediaType: 'photo',
+                includeBase64: true,
+                maxWidth: 1024,
+                maxHeight: 1024,
                 quality: 0.8,
-                base64: true,
-                exif: false
+                saveToPhotos: false,
             });
 
-            if (!result.canceled && result.assets[0]) {
+            if (!result.didCancel && !result.errorCode && result.assets && result.assets[0]) {
                 console.log('📷 Camera result:', {
                     hasBase64: !!result.assets[0].base64,
                     base64Length: result.assets[0].base64?.length,
@@ -180,28 +153,27 @@ const DiseaseDetection = ({ onBackPress }) => {
                     fileSize: result.assets[0].fileSize
                 });
                 await processSelectedImage(result.assets[0]);
+            } else if (result.errorCode) {
+                Alert.alert('Error', result.errorMessage || 'Failed to capture image. Please try again.');
             }
         } catch (error) {
             console.error('Camera error:', error);
-            Alert.alert('Error', 'Failed to capture image. Please try again.');
+            Alert.alert('Error', 'Failed to open camera. Please check permissions.');
         }
     };
 
     const handleImagePick = async () => {
         try {
-            const hasPermission = await requestPermissions();
-            if (!hasPermission) return;
-
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ['images'],
-                allowsEditing: true,
-                aspect: [1, 1],
+            const result = await launchImageLibrary({
+                mediaType: 'photo',
+                includeBase64: true,
+                maxWidth: 1024,
+                maxHeight: 1024,
                 quality: 0.8,
-                base64: true,
-                exif: false
+                selectionLimit: 1,
             });
 
-            if (!result.canceled && result.assets[0]) {
+            if (!result.didCancel && !result.errorCode && result.assets && result.assets[0]) {
                 console.log('🖼️ Gallery result:', {
                     hasBase64: !!result.assets[0].base64,
                     base64Length: result.assets[0].base64?.length,
@@ -210,10 +182,12 @@ const DiseaseDetection = ({ onBackPress }) => {
                     fileSize: result.assets[0].fileSize
                 });
                 await processSelectedImage(result.assets[0]);
+            } else if (result.errorCode) {
+                Alert.alert('Error', result.errorMessage || 'Failed to pick image. Please try again.');
             }
         } catch (error) {
             console.error('Image picker error:', error);
-            Alert.alert('Error', 'Failed to pick image. Please try again.');
+            Alert.alert('Error', 'Failed to open gallery. Please check permissions.');
         }
     };
 
@@ -241,7 +215,7 @@ const DiseaseDetection = ({ onBackPress }) => {
         // Add "analyzing" message
         const analyzingMessage = {
             id: Date.now() + 1,
-            text: "🔍 Analyzing your plant image...\n\nPlease wait while I examine the image for any signs of disease or health issues. This usually takes 10-30 seconds.",
+            text: "🔍 Analyzing your plant image...\n\nPlease wait while I examine the image for any signs of disease or health issues.\n\n⏱️ This may take 60-90 seconds on first use if the server is waking up from sleep.",
             isAI: true,
             timestamp: new Date()
         };
@@ -265,8 +239,9 @@ const DiseaseDetection = ({ onBackPress }) => {
             const base64Image = imageAsset.base64;
 
             console.log('🚀 Sending to backend:', `${process.env.EXPO_PUBLIC_API_URL}/api/disease/detect`);
+            console.log('⏳ Note: First request may take 50-90 seconds if server is sleeping (Render free tier)');
 
-            // Call API directly
+            // Call API directly with extended timeout for Render cold starts
             const response = await diseaseAPI.detect({
                 image: base64Image,
                 cropType: message.trim() || 'unknown',
@@ -309,10 +284,12 @@ const DiseaseDetection = ({ onBackPress }) => {
             console.error('Disease detection error:', error);
 
             let errorText = '❌ Analysis Failed\n\n';
-            if (error.message && error.message.includes('Cannot reach backend')) {
-                errorText += 'Cannot connect to server.\n\nMake sure:\n• Backend is running on http://192.168.1.41:3000\n• Your phone and computer are on the same WiFi\n• Windows Firewall allows port 3000';
-            } else if (error.message && error.message.includes('timeout')) {
-                errorText += 'Request timeout. The server is taking too long.\n\nPlease try again.';
+            if (error.message && error.message.includes('timeout')) {
+                errorText += 'Request timeout.\n\n⏳ If this is your first request, the server may be waking up from sleep (Render free tier). This can take 50-90 seconds.\n\n✅ Please try again in a moment - subsequent requests will be much faster!';
+            } else if (error.message && error.message.includes('Network Error')) {
+                errorText += 'Cannot connect to server.\n\nPlease check:\n• Your internet connection\n• Backend server is running\n• Try again in a moment';
+            } else if (error.message && error.message.includes('Cloudinary')) {
+                errorText += 'Image upload failed.\n\nPossible causes:\n• Image too large (max 10MB)\n• Cloudinary credentials not configured\n• Network connection issue\n\nPlease try with a smaller image.';
             } else {
                 errorText += `Error: ${error.message || 'Unknown error occurred'}\n\nPlease try again or contact support.`;
             }
@@ -368,7 +345,7 @@ const DiseaseDetection = ({ onBackPress }) => {
                     shadowRadius: 4,
                     elevation: 3
                 }}>
-                    <Ionicons name="leaf" size={20} color="#ffffff" />
+                    <Icon name="leaf" size={20} color="#ffffff" />
                 </View>
             )}
             <View style={{
@@ -443,7 +420,7 @@ const DiseaseDetection = ({ onBackPress }) => {
                             marginRight: 12
                         }}
                     >
-                        <Ionicons name="arrow-back" size={24} color={colors.text} />
+                        <Icon name="arrow-back" size={24} color={colors.text} />
                     </TouchableOpacity>
                     <View style={{ flex: 1 }}>
                         <Text style={{
@@ -470,7 +447,7 @@ const DiseaseDetection = ({ onBackPress }) => {
                                 padding: 8
                             }}
                         >
-                            <Ionicons name="trash-outline" size={22} color="#ff3b30" />
+                            <Icon name="trash-outline" size={22} color="#ff3b30" />
                         </TouchableOpacity>
                     )}
                 </View>
@@ -524,7 +501,7 @@ const DiseaseDetection = ({ onBackPress }) => {
                                             padding: 20,
                                             marginBottom: 24
                                         }}>
-                                            <Ionicons name="camera-outline" size={60} color="#667eea" />
+                                            <Icon name="camera-outline" size={60} color="#667eea" />
                                         </View>
                                         <Text style={{
                                             fontSize: 24,
@@ -560,7 +537,7 @@ const DiseaseDetection = ({ onBackPress }) => {
                                                 elevation: 5
                                             }}
                                         >
-                                            <Ionicons name="camera" size={24} color="#ffffff" />
+                                            <Icon name="camera" size={24} color="#ffffff" />
                                             <Text style={{
                                                 color: '#ffffff',
                                                 fontSize: 18,
@@ -657,7 +634,7 @@ const DiseaseDetection = ({ onBackPress }) => {
                                     elevation: 3
                                 }}
                             >
-                                <Ionicons
+                                <Icon
                                     name="camera"
                                     size={24}
                                     color={isAnalyzing ? colors.textSecondary : "#ffffff"}

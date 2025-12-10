@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from './Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../context/ThemeContext';
 
@@ -58,7 +58,7 @@ const TabNavigator = ({ currentTab, onTabPress }) => {
 									start={{ x: 0, y: 0 }}
 									end={{ x: 1, y: 1 }}
 								>
-									<Ionicons
+									<Icon
 										name={tab.activeIcon}
 										size={20}
 										color={colors.text}
@@ -74,7 +74,7 @@ const TabNavigator = ({ currentTab, onTabPress }) => {
 								</LinearGradient>
 							) : (
 								<View style={{ alignItems: 'center' }}>
-									<Ionicons
+									<Icon
 										name={tab.icon}
 										size={20}
 										color={colors.textSecondary}

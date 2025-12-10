@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from './Icon';
 
 const PasswordInput = ({
   value,
@@ -133,7 +133,7 @@ const PasswordInput = ({
           }}
           activeOpacity={0.7}
         >
-          <Ionicons
+          <Icon
             name={isPasswordVisible ? 'eye-off' : 'eye'}
             size={20}
             color="rgba(255, 255, 255, 0.7)"
@@ -174,7 +174,7 @@ const PasswordInput = ({
                 Password Strength: {passwordStrength.text}
               </Text>
               {passwordStrength.strength >= 4 && (
-                <Ionicons name="checkmark-circle" size={14} color={passwordStrength.color} />
+                <Icon name="checkmark-circle" size={14} color={passwordStrength.color} />
               )}
             </View>
           )}
@@ -203,7 +203,7 @@ const PasswordInput = ({
               {matchStatus.text}
             </Text>
             {matchStatus.isMatching && (
-              <Ionicons name="checkmark-circle" size={14} color={matchStatus.color} />
+              <Icon name="checkmark-circle" size={14} color={matchStatus.color} />
             )}
           </View>
         </View>

@@ -9,7 +9,7 @@ import {
 	StatusBar
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from '../components/Icon';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -86,7 +86,7 @@ const Settings = () => {
 				padding: 8,
 				marginRight: 12
 			}}>
-				<Ionicons name={icon} size={20} color={colors.primary} />
+				<Icon name={icon} size={20} color={colors.primary} />
 			</View>
 
 			<View style={{ flex: 1 }}>
@@ -109,7 +109,7 @@ const Settings = () => {
 			</View>
 
 			{rightComponent || (hasArrow && (
-				<Ionicons
+				<Icon
 					name="chevron-forward"
 					size={20}
 					color={colors.textTertiary}
@@ -135,7 +135,7 @@ const Settings = () => {
 				padding: 8,
 				marginRight: 12
 			}}>
-				<Ionicons name={icon} size={20} color={color} />
+				<Icon name={icon} size={20} color={color} />
 			</View>
 
 			<View style={{ flex: 1 }}>
@@ -257,7 +257,7 @@ const Settings = () => {
 							marginRight: 16
 						}}
 					>
-						<Ionicons name="arrow-back" size={24} color={colors.text} />
+						<Icon name="arrow-back" size={24} color={colors.text} />
 					</TouchableOpacity>
 
 					<Text style={{
@@ -274,7 +274,7 @@ const Settings = () => {
 						borderRadius: 12,
 						padding: 8
 					}}>
-						<Ionicons name="settings" size={24} color={colors.primary} />
+						<Icon name="settings" size={24} color={colors.primary} />
 					</View>
 				</View>
 
@@ -392,7 +392,7 @@ const Settings = () => {
 							padding: 8,
 							marginRight: 12
 						}}>
-							<Ionicons name="log-out" size={20} color={colors.error} />
+							<Icon name="log-out" size={20} color={colors.error} />
 						</View>
 
 						<View style={{ flex: 1 }}>
@@ -411,7 +411,7 @@ const Settings = () => {
 							</Text>
 						</View>
 
-						<Ionicons
+						<Icon
 							name="chevron-forward"
 							size={20}
 							color={`${colors.error}60`}

@@ -7,7 +7,7 @@ import {
 	Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from '../components/Icon';
 import * as Location from 'expo-location';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -102,7 +102,7 @@ const Home = ({ onNavigateToPage }) => {
 					padding: 8,
 					marginRight: 12
 				}}>
-					<Ionicons name={icon} size={24} color={color} />
+					<Icon name={icon} size={24} color={color} />
 				</View>
 				<Text style={{
 					fontSize: 18,
@@ -163,7 +163,7 @@ const Home = ({ onNavigateToPage }) => {
 								padding: 8,
 								alignSelf: 'flex-start'
 							}}>
-								<Ionicons name="location" size={16} color="#667eea" />
+								<Icon name="location" size={16} color="#667eea" />
 								<Text style={{
 									color: colors.textSecondary,
 									fontSize: 14,
@@ -182,7 +182,7 @@ const Home = ({ onNavigateToPage }) => {
 								padding: 8,
 								alignSelf: 'flex-start'
 							}}>
-								<Ionicons name="location" size={16} color="#667eea" />
+								<Icon name="location" size={16} color="#667eea" />
 								<Text style={{
 									color: colors.textSecondary,
 									fontSize: 14,

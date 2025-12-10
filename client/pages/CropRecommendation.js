@@ -10,7 +10,7 @@ import {
 	BackHandler
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from '../components/Icon';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { fertilizerAPI } from '../services/api';
@@ -174,7 +174,7 @@ const CropRecommendation = ({ onBackPress }) => {
 								marginRight: 16
 							}}
 						>
-							<Ionicons name="arrow-back" size={24} color={colors.text} />
+							<Icon name="arrow-back" size={24} color={colors.text} />
 						</TouchableOpacity>
 						<Text style={{
 							fontSize: 24,
@@ -216,7 +216,7 @@ const CropRecommendation = ({ onBackPress }) => {
 									padding: 8,
 									marginRight: 12
 								}}>
-									<Ionicons name="location" size={20} color="#667eea" />
+									<Icon name="location" size={20} color="#667eea" />
 								</View>
 								<View style={{ flex: 1 }}>
 									<Text style={{
@@ -235,7 +235,7 @@ const CropRecommendation = ({ onBackPress }) => {
 									</Text>
 								</View>
 							</View>
-							<Ionicons name="chevron-down" size={20} color={colors.textSecondary} />
+							<Icon name="chevron-down" size={20} color={colors.textSecondary} />
 						</TouchableOpacity>
 					</View>
 
@@ -316,7 +316,7 @@ const CropRecommendation = ({ onBackPress }) => {
 							borderWidth: 1,
 							borderColor: colors.textSecondary + '40'
 						}}>
-							<Ionicons name="construct-outline" size={48} color={colors.textSecondary} />
+							<Icon name="construct-outline" size={48} color={colors.textSecondary} />
 							<Text style={{
 								fontSize: 18,
 								fontWeight: '600',
@@ -352,7 +352,7 @@ const CropRecommendation = ({ onBackPress }) => {
 									<View style={{
 										marginRight: 16
 									}}>
-										<Ionicons name="location" size={26} color="#667eea" />
+										<Icon name="location" size={26} color="#667eea" />
 									</View>
 									<View style={{ flex: 1 }}>
 										<Text style={{
@@ -386,7 +386,7 @@ const CropRecommendation = ({ onBackPress }) => {
 									<View style={{
 										marginRight: 16
 									}}>
-										<Ionicons name="earth" size={26} color="#ff6b35" />
+										<Icon name="earth" size={26} color="#ff6b35" />
 									</View>
 									<Text style={{
 										fontSize: 20,
@@ -438,7 +438,7 @@ const CropRecommendation = ({ onBackPress }) => {
 									<View style={{
 										marginRight: 16
 									}}>
-										<Ionicons name="leaf" size={26} color="#4caf50" />
+										<Icon name="leaf" size={26} color="#4caf50" />
 									</View>
 									<Text style={{
 										fontSize: 20,
@@ -471,7 +471,7 @@ const CropRecommendation = ({ onBackPress }) => {
 											<View style={{
 												marginRight: 12
 											}}>
-												<Ionicons name="leaf" size={20} color="#4caf50" />
+												<Icon name="leaf" size={20} color="#4caf50" />
 											</View>
 											<Text style={{
 												fontSize: 14,
@@ -538,7 +538,7 @@ const CropRecommendation = ({ onBackPress }) => {
 											padding: 8,
 											marginRight: 12
 										}}>
-											<Ionicons name="location" size={20} color="#667eea" />
+											<Icon name="location" size={20} color="#667eea" />
 										</View>
 										<Text style={{
 											fontSize: 18,
@@ -556,7 +556,7 @@ const CropRecommendation = ({ onBackPress }) => {
 											padding: 6
 										}}
 									>
-										<Ionicons name="close" size={16} color="#ffffff" />
+										<Icon name="close" size={16} color="#ffffff" />
 									</TouchableOpacity>
 								</View>
 								<Text style={{
@@ -587,7 +587,7 @@ const CropRecommendation = ({ onBackPress }) => {
 									borderWidth: 1,
 									borderColor: 'rgba(255,255,255,0.1)'
 								}}>
-									<Ionicons name="search" size={18} color="rgba(255,255,255,0.5)" />
+									<Icon name="search" size={18} color="rgba(255,255,255,0.5)" />
 									<TextInput
 										style={{
 											flex: 1,
@@ -604,7 +604,7 @@ const CropRecommendation = ({ onBackPress }) => {
 									/>
 									{searchQuery.length > 0 && (
 										<TouchableOpacity onPress={() => setSearchQuery('')}>
-											<Ionicons name="close-circle" size={18} color="rgba(255,255,255,0.5)" />
+											<Icon name="close-circle" size={18} color="rgba(255,255,255,0.5)" />
 										</TouchableOpacity>
 									)}
 								</View>
@@ -657,7 +657,7 @@ const CropRecommendation = ({ onBackPress }) => {
 													padding: 8,
 													marginRight: 12
 												}}>
-													<Ionicons
+													<Icon
 														name="business"
 														size={16}
 														color={selectedLocation === location ? '#fff' : 'rgba(255,255,255,0.7)'}
@@ -677,7 +677,7 @@ const CropRecommendation = ({ onBackPress }) => {
 													borderRadius: 12,
 													padding: 4
 												}}>
-													<Ionicons name="checkmark" size={16} color="#fff" />
+													<Icon name="checkmark" size={16} color="#fff" />
 												</View>
 											)}
 										</TouchableOpacity>

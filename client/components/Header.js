@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from './Icon';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../context/ThemeContext';
@@ -33,7 +33,7 @@ const Header = ({ title = "AgroLens" }) => {
 						padding: 8,
 						marginRight: 12
 					}}>
-						<Ionicons name="leaf" size={24} color="#667eea" />
+						<Icon name="leaf" size={24} color="#667eea" />
 					</View>
 					<Text style={{
 						fontSize: 20,
@@ -54,7 +54,7 @@ const Header = ({ title = "AgroLens" }) => {
 						padding: 8
 					}}
 				>
-					<Ionicons name="settings-outline" size={24} color={colors.text} />
+					<Icon name="settings-outline" size={24} color={colors.text} />
 				</TouchableOpacity>
 			</View>
 		</SafeAreaView>

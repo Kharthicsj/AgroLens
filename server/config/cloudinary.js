@@ -21,14 +21,17 @@ export const uploadToCloudinary = async (imageData, userId = 'unknown') => {
     try {
         // Validate Cloudinary configuration
         if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-            throw new Error('Cloudinary credentials are not configured properly');
+            console.error('❌ Missing Cloudinary credentials:', {
+                cloud_name: !!process.env.CLOUDINARY_CLOUD_NAME,
+                api_key: !!process.env.CLOUDINARY_API_KEY,
+                api_secret: !!process.env.CLOUDINARY_API_SECRET
+            });
+            throw new Error('Cloudinary credentials are not configured. Please add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET to environment variables.');
         }
 
-        console.log('☁️  Cloudinary config check:', {
-            cloud_name: !!process.env.CLOUDINARY_CLOUD_NAME,
-            api_key: !!process.env.CLOUDINARY_API_KEY,
-            api_secret: !!process.env.CLOUDINARY_API_SECRET
-        });
+        console.log('☁️  Cloudinary config check: ✅ All credentials present');
+        console.log('📦 Image data length:', imageData.length);
+        console.log('📦 Image data prefix:', imageData.substring(0, 30));
 
         const uploadOptions = {
             folder: `AgroLens/disease-detection/${userId}`,
@@ -38,12 +41,16 @@ export const uploadToCloudinary = async (imageData, userId = 'unknown') => {
                 { quality: 'auto', fetch_format: 'auto' },
                 { width: 1024, height: 1024, crop: 'limit' }
             ],
-            tags: ['disease-detection', 'agrolens']
+            tags: ['disease-detection', 'agrolens'],
+            timeout: 120000 // 120 seconds timeout for large images
         };
 
         console.log('📤 Uploading to Cloudinary folder:', uploadOptions.folder);
         const result = await cloudinary.uploader.upload(imageData, uploadOptions);
-        console.log('✅ Cloudinary upload successful:', result.public_id);
+        console.log('✅ Cloudinary upload successful!');
+        console.log('   - Public ID:', result.public_id);
+        console.log('   - URL:', result.secure_url);
+        console.log('   - Size:', result.bytes, 'bytes');
 
         return {
             success: true,
@@ -56,8 +63,25 @@ export const uploadToCloudinary = async (imageData, userId = 'unknown') => {
             createdAt: result.created_at
         };
     } catch (error) {
-        console.error('Cloudinary upload error:', error);
-        throw new Error(`Failed to upload image to Cloudinary: ${error.message}`);
+        console.error('❌ Cloudinary upload error:', {
+            message: error.message,
+            name: error.name,
+            http_code: error.http_code
+        });
+
+        // More specific error messages
+        let errorMessage = 'Failed to upload image to Cloudinary';
+        if (error.message.includes('Invalid image')) {
+            errorMessage += ': Invalid image format. Please ensure the image is a valid JPEG/PNG.';
+        } else if (error.message.includes('credentials')) {
+            errorMessage += ': Invalid Cloudinary credentials. Please check your environment variables.';
+        } else if (error.message.includes('timeout')) {
+            errorMessage += ': Upload timeout. The image may be too large.';
+        } else {
+            errorMessage += `: ${error.message}`;
+        }
+
+        throw new Error(errorMessage);
     }
 };
 

@@ -2,7 +2,7 @@
 	"expo": {
 		"name": "AgroLens",
 		"slug": "client",
-		"version": "1.0.2",
+		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/icon.png",
 		"userInterfaceStyle": "light",
@@ -30,7 +30,7 @@
 				"WRITE_EXTERNAL_STORAGE"
 			],
 			"package": "com.kharthic.agrolens",
-			"versionCode": 4
+			"versionCode": 5
 		},
 		"assetBundlePatterns": ["**/*"],
 		"web": {
@@ -55,13 +55,6 @@
 						"enableProguardInReleaseBuilds": false,
 						"enableShrinkResourcesInReleaseBuilds": false
 					}
-				}
-			],
-			[
-				"expo-image-picker",
-				{
-					"photosPermission": "Allow AgroLens to access your photos to detect plant diseases.",
-					"cameraPermission": "Allow AgroLens to use your camera to take photos of plants."
 				}
 			]
 		],

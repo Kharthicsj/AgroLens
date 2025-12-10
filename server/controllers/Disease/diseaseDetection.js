@@ -4,7 +4,7 @@ import { uploadToCloudinary, deleteFromCloudinary } from '../../config/cloudinar
 
 // ML API Configuration
 const ML_API_URL = process.env.ML_API_URL || 'http://localhost:5000';
-const ML_API_TIMEOUT = 30000; // 30 seconds
+const ML_API_TIMEOUT = 120000; // 120 seconds (Render free tier cold start can take 50+ seconds)
 
 /**
  * Detect disease from image (Base64)
@@ -28,6 +28,7 @@ export const detectDisease = async (req, res) => {
         }
 
         console.log(`📦 Received image data: ${image.length} characters`);
+        console.log(`📦 Image starts with: ${image.substring(0, 50)}...`);
 
         // Convert base64 to data URI if not already in that format
         let base64Data = image;
@@ -35,6 +36,8 @@ export const detectDisease = async (req, res) => {
             // Add data URI prefix for Cloudinary
             base64Data = `data:image/jpeg;base64,${image}`;
             console.log('✅ Added data URI prefix to base64 string');
+        } else {
+            console.log('✅ Image already has data URI prefix');
         }
 
         // Step 1: Upload image to Cloudinary
@@ -93,9 +96,14 @@ export const detectDisease = async (req, res) => {
                 console.error('⚠️  Failed to cleanup image:', cleanupError.message);
             }
 
+            let errorMessage = 'Failed to analyze image';
+            if (mlError.code === 'ECONNABORTED' || mlError.message.includes('timeout')) {
+                errorMessage = 'ML service timeout. If using Render free tier, the service may be waking up from sleep (takes 50+ seconds). Please try again in a moment.';
+            }
+
             return res.status(500).json({
                 success: false,
-                message: 'Failed to analyze image',
+                message: errorMessage,
                 error: mlError.message
             });
         }

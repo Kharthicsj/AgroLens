@@ -11,7 +11,7 @@ import {
 	ActivityIndicator
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from './Icon';
 import LoadingSpinner from './LoadingSpinner';
 import ModernInput from './ModernInput';
 import PasswordInput from './PasswordInput';
@@ -191,7 +191,7 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 								padding: 8
 							}}
 						>
-							<Ionicons name="close" size={24} color="#ffffff" />
+							<Icon name="close" size={24} color="#ffffff" />
 						</TouchableOpacity>
 
 						<Text style={{
@@ -333,7 +333,7 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 								borderColor: showPasswordSection ? '#667eea' : 'rgba(255, 255, 255, 0.2)'
 							}}
 						>
-							<Ionicons
+							<Icon
 								name="lock-closed-outline"
 								size={22}
 								color={showPasswordSection ? '#667eea' : '#ffffff'}
@@ -347,7 +347,7 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 							}}>
 								Change Password
 							</Text>
-							<Ionicons
+							<Icon
 								name={showPasswordSection ? "chevron-up" : "chevron-down"}
 								size={20}
 								color={showPasswordSection ? '#667eea' : 'rgba(255, 255, 255, 0.6)'}
@@ -515,7 +515,7 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 							marginBottom: 40
 						}}>
 							<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-								<Ionicons name="information-circle" size={20} color="#667eea" />
+								<Icon name="information-circle" size={20} color="#667eea" />
 								<Text style={{
 									color: '#667eea',
 									fontSize: 14,

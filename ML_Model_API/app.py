@@ -19,7 +19,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for Node.js backend communication
+
+# CORS Configuration - Allow all origins for development/production
+CORS(app, resources={
+    r"/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "expose_headers": ["Content-Type"],
+        "supports_credentials": False
+    }
+})
 
 # Configuration - Use environment variables for production
 MODEL_PATH = os.getenv('MODEL_PATH', 'best_mobilenetv2.pth')

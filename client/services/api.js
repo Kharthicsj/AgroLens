@@ -4,7 +4,7 @@ import { authUtils } from '../utils/auth';
 // Create axios instance with base configuration
 const api = axios.create({
   baseURL: `${process.env.EXPO_PUBLIC_API_URL}/api`,
-  timeout: 30000,
+  timeout: 150000, // 150 seconds for Render free tier cold starts (can take 50-90 seconds)
   headers: {
     'Content-Type': 'application/json',
   },
@@ -161,7 +161,7 @@ export const diseaseAPI = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        timeout: 90000, // 90 seconds
+        timeout: 150000, // 150 seconds for Render free tier cold start (50-90s)
       });
 
       console.log('✅ Response status:', response.status);
@@ -180,10 +180,10 @@ export const diseaseAPI = {
 
       // Better error messages
       if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
-        throw { message: 'Request timeout. Server is taking too long to respond.' };
+        throw { message: 'Request timeout. If this is your first request, the server may be waking up (Render free tier). This can take 50-90 seconds. Please try again!' };
       }
       if (error.code === 'ERR_NETWORK' || error.message.includes('Network')) {
-        throw { message: 'Network error. Please check your internet connection and ensure backend is running on http://192.168.1.38:3000' };
+        throw { message: 'Network error. Please check your internet connection.' };
       }
 
       throw error.response?.data || { message: error.message || 'Failed to detect disease' };
