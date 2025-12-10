@@ -1,0 +1,15 @@
+services:
+    - type: web
+      name: agrolens-ml-api
+      env: python
+      buildCommand: pip install -r requirements.txt
+      startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+      envVars:
+          - key: PYTHON_VERSION
+            value: 3.10.12
+          - key: MODEL_PATH
+            value: best_mobilenetv2.pth
+          - key: CLASS_NAMES_FILE
+            value: class_names.txt
+      healthCheckPath: /health
+      plan: free

@@ -1,4 +1,5 @@
 import os
+import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import torch
@@ -10,12 +11,21 @@ import base64
 import requests
 from io import BytesIO
 
+# Configure logging for production
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for Node.js backend communication
 
-# Configuration
-MODEL_PATH = 'best_mobilenetv2.pth'
-DATA_DIR = r"E:\data\dataset_split"  # Path to dataset directory
+# Configuration - Use environment variables for production
+MODEL_PATH = os.getenv('MODEL_PATH', 'best_mobilenetv2.pth')
+DATA_DIR = os.getenv('DATA_DIR', None)  # Optional dataset directory
+CLASS_NAMES_FILE = os.getenv('CLASS_NAMES_FILE', 'class_names.txt')
+PORT = int(os.getenv('PORT', 5000))
 
 # Auto-detect number of classes from model
 def detect_num_classes():
@@ -24,38 +34,62 @@ def detect_num_classes():
         state_dict = torch.load(MODEL_PATH, map_location='cpu', weights_only=False)
         classifier_weight = state_dict['classifier.1.weight']
         num_classes = classifier_weight.shape[0]
-        print(f"Detected {num_classes} classes from model")
+        logger.info(f"Detected {num_classes} classes from model")
         return num_classes
     except Exception as e:
-        print(f"Could not auto-detect classes: {e}")
+        logger.error(f"Could not auto-detect classes: {e}")
         return 97  # Default fallback
 
 def load_class_names():
-    """Load class names from the dataset directory (same as test_controller.py)"""
-    try:
-        train_dir = os.path.join(DATA_DIR, "train")
-        if os.path.exists(train_dir):
-            class_names = sorted([d for d in os.listdir(train_dir) 
-                                 if os.path.isdir(os.path.join(train_dir, d))])
-            print(f"✓ Loaded {len(class_names)} class names from dataset")
+    """Load class names from file (production) or dataset directory (development)"""
+    # Priority 1: Load from class_names.txt file (for production deployment)
+    if os.path.exists(CLASS_NAMES_FILE):
+        try:
+            with open(CLASS_NAMES_FILE, 'r', encoding='utf-8') as f:
+                class_names = [line.strip() for line in f if line.strip()]
+            logger.info(f"✓ Loaded {len(class_names)} class names from {CLASS_NAMES_FILE}")
             return class_names
-        else:
-            print(f"⚠️ Warning: Training directory not found at {train_dir}")
-            num_classes = detect_num_classes()
-            return [f"Class_{i}" for i in range(num_classes)]
-    except Exception as e:
-        print(f"⚠️ Could not load class names: {e}")
-        num_classes = detect_num_classes()
-        return [f"Class_{i}" for i in range(num_classes)]
+        except Exception as e:
+            logger.warning(f"Could not load from {CLASS_NAMES_FILE}: {e}")
+    
+    # Priority 2: Load from dataset directory (for development)
+    if DATA_DIR:
+        try:
+            train_dir = os.path.join(DATA_DIR, "train")
+            if os.path.exists(train_dir):
+                class_names = sorted([d for d in os.listdir(train_dir) 
+                                     if os.path.isdir(os.path.join(train_dir, d))])
+                logger.info(f"✓ Loaded {len(class_names)} class names from dataset")
+                
+                # Save to file for future use
+                try:
+                    with open(CLASS_NAMES_FILE, 'w', encoding='utf-8') as f:
+                        f.write('\n'.join(class_names))
+                    logger.info(f"✓ Saved class names to {CLASS_NAMES_FILE}")
+                except Exception as e:
+                    logger.warning(f"Could not save class names: {e}")
+                
+                return class_names
+        except Exception as e:
+            logger.warning(f"Could not load from dataset: {e}")
+    
+    # Priority 3: Fallback to generic class names
+    logger.warning("Using fallback class names")
+    num_classes = detect_num_classes()
+    return [f"Class_{i}" for i in range(num_classes)]
 
 NUM_CLASSES = detect_num_classes()
 CLASS_NAMES = load_class_names()
 
 # Validate class names match model
 if len(CLASS_NAMES) != NUM_CLASSES:
-    print(f"⚠️ Warning: CLASS_NAMES count ({len(CLASS_NAMES)}) doesn't match NUM_CLASSES ({NUM_CLASSES})")
-    print(f"   Using first {NUM_CLASSES} class names")
-    CLASS_NAMES = CLASS_NAMES[:NUM_CLASSES] if len(CLASS_NAMES) > NUM_CLASSES else CLASS_NAMES + [f"Class_{i}" for i in range(len(CLASS_NAMES), NUM_CLASSES)]
+    logger.warning(f"CLASS_NAMES count ({len(CLASS_NAMES)}) doesn't match NUM_CLASSES ({NUM_CLASSES})")
+    if len(CLASS_NAMES) > NUM_CLASSES:
+        CLASS_NAMES = CLASS_NAMES[:NUM_CLASSES]
+        logger.info(f"Trimmed to first {NUM_CLASSES} class names")
+    else:
+        CLASS_NAMES = CLASS_NAMES + [f"Class_{i}" for i in range(len(CLASS_NAMES), NUM_CLASSES)]
+        logger.info(f"Added generic names for remaining classes")
 
 # Image preprocessing pipeline (matching training pipeline)
 image_transform = transforms.Compose([
@@ -73,17 +107,20 @@ def create_model():
     return model
 
 # Load model once at startup
-print("Loading MobileNetV2 model...")
+logger.info("Loading MobileNetV2 model...")
 device = torch.device('cpu')  # Force CPU for deployment stability
 model = create_model()
 
 try:
+    if not os.path.exists(MODEL_PATH):
+        raise FileNotFoundError(f"Model file not found: {MODEL_PATH}")
+    
     model.load_state_dict(torch.load(MODEL_PATH, map_location=device, weights_only=False))
     model.to(device)
     model.eval()  # Set to evaluation mode
-    print(f"✓ Model loaded successfully from {MODEL_PATH}")
+    logger.info(f"✓ Model loaded successfully from {MODEL_PATH}")
 except Exception as e:
-    print(f"✗ Error loading model: {e}")
+    logger.error(f"✗ Error loading model: {e}")
     raise
 
 def download_image_from_url(image_url):
@@ -143,7 +180,7 @@ def predict():
             # Check for Cloudinary URL
             if 'imageUrl' in data:
                 image_url = data['imageUrl']
-                print(f"📥 Downloading image from URL: {image_url[:50]}...")
+                logger.info(f"📥 Downloading image from URL: {image_url[:50]}...")
                 image_bytes = download_image_from_url(image_url)
                 source_type = 'url'
             
@@ -168,12 +205,13 @@ def predict():
                 source_type = 'file'
         
         if image_bytes is None:
+            logger.warning("No image provided in request")
             return jsonify({
                 'success': False,
                 'error': 'No image provided. Send JSON with imageUrl or upload image file'
             }), 400
         
-        print(f"🔄 Processing image (source: {source_type})...")
+        logger.info(f"🔄 Processing image (source: {source_type})...")
         
         # Preprocess image
         image_tensor = preprocess_image(image_bytes)
@@ -197,7 +235,7 @@ def predict():
             else:
                 predicted_class_name = f"Class_{predicted_class_idx}"
         
-        print(f"✅ Prediction: {predicted_class_name} ({confidence_score*100:.2f}%)")
+        logger.info(f"✅ Prediction: {predicted_class_name} ({confidence_score*100:.2f}%)")
         
         # Return prediction results (Node.js friendly format)
         return jsonify({
@@ -217,7 +255,7 @@ def predict():
         }), 200
     
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        logger.error(f"❌ Error: {str(e)}", exc_info=True)
         return jsonify({
             'success': False,
             'error': f'Error processing image: {str(e)}'
@@ -245,12 +283,13 @@ def health_check():
 
 if __name__ == '__main__':
     # Run Flask app
-    print(f"\n{'='*50}")
-    print(f"🚀 Plant Disease Detection API Server")
-    print(f"{'='*50}")
-    print(f"Model: MobileNetV2")
-    print(f"Device: {device}")
-    print(f"Classes: {len(CLASS_NAMES)}")
-    print(f"Port: 5000")
-    print(f"{'='*50}\n")
-    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+    logger.info(f"\n{'='*50}")
+    logger.info(f"🚀 Plant Disease Detection API Server")
+    logger.info(f"{'='*50}")
+    logger.info(f"Model: MobileNetV2")
+    logger.info(f"Device: {device}")
+    logger.info(f"Classes: {len(CLASS_NAMES)}")
+    logger.info(f"Port: {PORT}")
+    logger.info(f"Environment: {'Production' if os.getenv('RENDER') else 'Development'}")
+    logger.info(f"{'='*50}\n")
+    app.run(host='0.0.0.0', port=PORT, debug=False, threaded=True)

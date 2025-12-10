@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Dataset (too large for Git)
+*.pth.backup
+dataset/
+dataset_split/
+E:/data/
+
+# Testing files
+test_image.JPG
+test_images/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Development only
+split_data.py
+test_gpu.py
+model.py
+INSTALL_COMMANDS.txt
+setup_amd_gpu.md
