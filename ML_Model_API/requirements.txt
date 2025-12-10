@@ -4,8 +4,8 @@ gunicorn==21.2.0
 werkzeug==3.0.1
 
 # PyTorch and Deep Learning
-torch==2.1.0
-torchvision==0.16.0
+torch==2.5.1
+torchvision==0.17.1
 
 # Image Processing
 Pillow==10.1.0
