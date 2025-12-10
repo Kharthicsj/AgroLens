@@ -1,12 +1,11 @@
 {
 	"expo": {
 		"name": "AgroLens",
-		"slug": "client",
+		"slug": "agrolens",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/icon.png",
 		"userInterfaceStyle": "light",
-		"newArchEnabled": false,
 		"splash": {
 			"image": "./assets/splash-icon.png",
 			"resizeMode": "contain",
@@ -47,17 +46,12 @@
 				"expo-build-properties",
 				{
 					"android": {
-						"kotlinVersion": "1.9.0",
 						"compileSdkVersion": 35,
 						"targetSdkVersion": 35,
 						"minSdkVersion": 24
-					},
-					"ios": {
-						"deploymentTarget": "15.1"
 					}
 				}
-			],
-			"expo-asset"
+			]
 		],
 		"owner": "kharthic",
 		"extra": {
