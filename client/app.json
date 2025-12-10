@@ -1,61 +1,78 @@
 {
-  "expo": {
-    "name": "AgroLens",
-    "slug": "client",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app uses location to show your current city for better agricultural recommendations."
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
-      ],
-      "package": "com.kharthic.client"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Allow AgroLens to use your location to show your current city for better agricultural recommendations."
-        }
-      ],
-      "expo-build-properties",
-      "expo-asset"
-    ],
-    "owner": "kharthic",
-    "extra": {
-      "eas": {
-        "projectId": "0192fb05-0a2a-41a3-b85e-d7b3ee215f19"
-      }
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/0192fb05-0a2a-41a3-b85e-d7b3ee215f19"
-    }
-  }
+	"expo": {
+		"name": "AgroLens",
+		"slug": "client",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "light",
+		"newArchEnabled": false,
+		"splash": {
+			"image": "./assets/splash-icon.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#ffffff"
+		},
+		"ios": {
+			"supportsTablet": true,
+			"infoPlist": {
+				"NSLocationWhenInUseUsageDescription": "This app uses location to show your current city for better agricultural recommendations."
+			}
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/adaptive-icon.png",
+				"backgroundColor": "#ffffff"
+			},
+			"permissions": [
+				"ACCESS_FINE_LOCATION",
+				"ACCESS_COARSE_LOCATION",
+				"CAMERA",
+				"READ_EXTERNAL_STORAGE",
+				"WRITE_EXTERNAL_STORAGE"
+			],
+			"package": "com.kharthic.agrolens",
+			"versionCode": 1
+		},
+		"web": {
+			"favicon": "./assets/favicon.png"
+		},
+		"plugins": [
+			[
+				"expo-location",
+				{
+					"locationAlwaysAndWhenInUsePermission": "Allow AgroLens to use your location to show your current city for better agricultural recommendations."
+				}
+			],
+			[
+				"expo-build-properties",
+				{
+					"android": {
+						"kotlinVersion": "1.9.24",
+						"compileSdkVersion": 35,
+						"targetSdkVersion": 35,
+						"buildToolsVersion": "35.0.0",
+						"minSdkVersion": 24,
+						"enableProguardInReleaseBuilds": false,
+						"enableShrinkResourcesInReleaseBuilds": false
+					},
+					"ios": {
+						"deploymentTarget": "15.1"
+					}
+				}
+			],
+			"expo-asset"
+		],
+		"owner": "kharthic",
+		"extra": {
+			"eas": {
+				"projectId": "0192fb05-0a2a-41a3-b85e-d7b3ee215f19"
+			}
+		},
+		"runtimeVersion": {
+			"policy": "appVersion"
+		},
+		"updates": {
+			"url": "https://u.expo.dev/0192fb05-0a2a-41a3-b85e-d7b3ee215f19"
+		}
+	}
 }
