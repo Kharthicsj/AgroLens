@@ -225,6 +225,7 @@ const Home = ({ onNavigateToPage }) => {
 						title="Disease Detection"
 						description="Early detection and identification of crop diseases using AI-powered image analysis to protect your harvest"
 						color="#e74c3c"
+						onPress={() => onNavigateToPage && onNavigateToPage('DiseaseDetection')}
 					/>
 				</ScrollView>
 			</LinearGradient>

@@ -4,6 +4,7 @@ import Home from '../pages/Home';
 import UserProfile from '../pages/UserProfile';
 import CropRecommendation from '../pages/CropRecommendation';
 import FertilizerRecommendation from '../pages/FertilizerRecommendation';
+import DiseaseDetection from '../pages/DiseaseDetection';
 import TabNavigator from '../components/TabNavigator';
 import Header from '../components/Header';
 import { useTheme } from '../context/ThemeContext';
@@ -37,6 +38,8 @@ const MainApp = () => {
 				return <CropRecommendation onBackPress={handleBackToHome} />;
 			case 'FertilizerRecommendation':
 				return <FertilizerRecommendation onBackPress={handleBackToHome} />;
+			case 'DiseaseDetection':
+				return <DiseaseDetection onBackPress={handleBackToHome} />;
 			default:
 				return <Home onNavigateToPage={handleNavigateToPage} />;
 		}
@@ -44,11 +47,11 @@ const MainApp = () => {
 
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.background[0] }}>
-			{currentPage !== 'CropRecommendation' && currentPage !== 'FertilizerRecommendation' && <Header />}
+			{currentPage !== 'CropRecommendation' && currentPage !== 'FertilizerRecommendation' && currentPage !== 'DiseaseDetection' && <Header />}
 			<View style={{ flex: 1 }}>
 				{renderCurrentScreen()}
 			</View>
-			{currentPage !== 'CropRecommendation' && currentPage !== 'FertilizerRecommendation' && (
+			{currentPage !== 'CropRecommendation' && currentPage !== 'FertilizerRecommendation' && currentPage !== 'DiseaseDetection' && (
 				<TabNavigator
 					currentTab={currentTab}
 					onTabPress={handleTabPress}

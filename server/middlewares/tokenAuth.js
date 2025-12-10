@@ -4,7 +4,7 @@ async function tokenAuth(req, res, next) {
     try {
         // Get token from Authorization header
         const authHeader = req.headers.authorization;
-        
+
         if (!authHeader) {
             return res.status(401).json({
                 error: true,
@@ -14,8 +14,8 @@ async function tokenAuth(req, res, next) {
         }
 
         // Extract token from "Bearer <token>" format
-        const token = authHeader.startsWith('Bearer ') 
-            ? authHeader.slice(7) 
+        const token = authHeader.startsWith('Bearer ')
+            ? authHeader.slice(7)
             : authHeader;
 
         if (!token) {
@@ -28,17 +28,22 @@ async function tokenAuth(req, res, next) {
 
         // Verify and decode the token
         const decoded = jwt.verify(token, "MySecretCode");
-        
-        // Add user information to request object
+
+        // Add user information to request object (both formats for compatibility)
         req.userData = {
             userId: decoded.userId,
             email: decoded.email
         };
 
+        req.user = {
+            _id: decoded.userId,
+            email: decoded.email
+        };
+
         // Continue to next middleware or route handler
         next();
-        
-    } catch(err) {
+
+    } catch (err) {
         // Handle specific JWT errors
         if (err.name === 'TokenExpiredError') {
             return res.status(401).json({

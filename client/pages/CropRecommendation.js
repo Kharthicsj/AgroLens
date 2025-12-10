@@ -6,7 +6,8 @@ import {
 	TouchableOpacity,
 	Modal,
 	ActivityIndicator,
-	TextInput
+	TextInput,
+	BackHandler
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,6 +26,19 @@ const CropRecommendation = ({ onBackPress }) => {
 	const [error, setError] = useState('');
 	const [showLocationModal, setShowLocationModal] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
+
+	// Handle hardware back button
+	useEffect(() => {
+		const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+			if (onBackPress) {
+				onBackPress();
+				return true; // Prevent default behavior
+			}
+			return false;
+		});
+
+		return () => backHandler.remove();
+	}, [onBackPress]);
 
 	// Fetch districts and recommendations on mount
 	useEffect(() => {
