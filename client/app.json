@@ -32,6 +32,9 @@
 			"package": "com.kharthic.agrolens",
 			"versionCode": 1
 		},
+		"assetBundlePatterns": [
+			"**/*"
+		],
 		"web": {
 			"favicon": "./assets/favicon.png"
 		},
