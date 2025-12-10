@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -38,7 +38,7 @@ const UserProfile = () => {
 			setError(null);
 
 			const response = await userAPI.fetchUserData();
-			
+
 			if (response.success) {
 				setUserDetails(response.userData);
 			} else {
@@ -217,8 +217,8 @@ const UserProfile = () => {
 				colors={colors.background}
 				style={{ flex: 1 }}
 			>
-				<ScrollView 
-					style={{ flex: 1 }} 
+				<ScrollView
+					style={{ flex: 1 }}
 					contentContainerStyle={{ padding: 24 }}
 					refreshControl={
 						<RefreshControl
@@ -242,31 +242,31 @@ const UserProfile = () => {
 							borderWidth: 3,
 							borderColor: '#667eea'
 						}}>
+							<Text style={{
+								fontSize: 36,
+								fontWeight: '800',
+								color: colors.text,
+								textTransform: 'uppercase'
+							}}>
+								{userDetails?.name ? userDetails.name.charAt(0) : 'U'}
+							</Text>
+						</View>
 						<Text style={{
-							fontSize: 36,
-							fontWeight: '800',
+							fontSize: 24,
+							fontWeight: '700',
 							color: colors.text,
-							textTransform: 'uppercase'
+							marginBottom: 8
 						}}>
-							{userDetails?.name ? userDetails.name.charAt(0) : 'U'}
+							{userDetails?.name || 'User'}
 						</Text>
-					</View>
-					<Text style={{
-						fontSize: 24,
-						fontWeight: '700',
-						color: colors.text,
-						marginBottom: 8
-					}}>
-						{userDetails?.name || 'User'}
-					</Text>
-					<Text style={{
-						fontSize: 16,
-						color: colors.textSecondary
-					}}>
-						{userDetails?.email || 'No email'}
-					</Text>
+						<Text style={{
+							fontSize: 16,
+							color: colors.textSecondary
+						}}>
+							{userDetails?.email || 'No email'}
+						</Text>
 
-					{/* Edit Profile Button */}
+						{/* Edit Profile Button */}
 						<TouchableOpacity
 							onPress={() => setEditModalVisible(true)}
 							style={{
@@ -313,7 +313,7 @@ const UserProfile = () => {
 						icon="mail-outline"
 						title="Email Address"
 						value={userDetails?.email || 'Not provided'}
-						onPress={() => {}}
+						onPress={() => { }}
 						editable={false}
 					/>
 
@@ -339,7 +339,7 @@ const UserProfile = () => {
 							icon="finger-print-outline"
 							title="User ID"
 							value={userDetails._id.slice(-8).toUpperCase()}
-							onPress={() => {}}
+							onPress={() => { }}
 						/>
 					)}
 

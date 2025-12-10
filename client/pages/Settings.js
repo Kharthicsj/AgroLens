@@ -9,7 +9,7 @@ import {
 	StatusBar
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -18,7 +18,7 @@ const Settings = () => {
 	const navigation = useNavigation();
 	const { theme, colors, isDark, toggleTheme } = useTheme();
 	const { logout } = useAuth();
-	
+
 	// Settings state
 	const [notifications, setNotifications] = useState(true);
 	const [autoSync, setAutoSync] = useState(true);
@@ -88,7 +88,7 @@ const Settings = () => {
 			}}>
 				<Ionicons name={icon} size={20} color={colors.primary} />
 			</View>
-			
+
 			<View style={{ flex: 1 }}>
 				<Text style={{
 					color: colors.text,
@@ -107,12 +107,12 @@ const Settings = () => {
 					</Text>
 				)}
 			</View>
-			
+
 			{rightComponent || (hasArrow && (
-				<Ionicons 
-					name="chevron-forward" 
-					size={20} 
-					color={colors.textTertiary} 
+				<Ionicons
+					name="chevron-forward"
+					size={20}
+					color={colors.textTertiary}
 				/>
 			))}
 		</TouchableOpacity>
@@ -137,7 +137,7 @@ const Settings = () => {
 			}}>
 				<Ionicons name={icon} size={20} color={color} />
 			</View>
-			
+
 			<View style={{ flex: 1 }}>
 				<Text style={{
 					color: colors.text,
@@ -156,7 +156,7 @@ const Settings = () => {
 					</Text>
 				)}
 			</View>
-			
+
 			<Switch
 				value={value}
 				onValueChange={onToggle}
@@ -259,7 +259,7 @@ const Settings = () => {
 					>
 						<Ionicons name="arrow-back" size={24} color={colors.text} />
 					</TouchableOpacity>
-					
+
 					<Text style={{
 						color: colors.text,
 						fontSize: 24,
@@ -268,7 +268,7 @@ const Settings = () => {
 					}}>
 						Settings
 					</Text>
-					
+
 					<View style={{
 						backgroundColor: colors.primaryLight,
 						borderRadius: 12,
@@ -279,14 +279,14 @@ const Settings = () => {
 				</View>
 
 				{/* Settings Content */}
-				<ScrollView 
-					style={{ flex: 1 }} 
+				<ScrollView
+					style={{ flex: 1 }}
 					contentContainerStyle={{ padding: 20 }}
 					showsVerticalScrollIndicator={false}
 				>
 					{/* Appearance */}
 					<SectionHeader title="Appearance" />
-					
+
 					<ToggleItem
 						icon="moon"
 						title="Dark Theme"
@@ -298,7 +298,7 @@ const Settings = () => {
 
 					{/* Notifications */}
 					<SectionHeader title="Notifications" />
-					
+
 					<ToggleItem
 						icon="notifications"
 						title="Push Notifications"
@@ -310,7 +310,7 @@ const Settings = () => {
 
 					{/* Data & Storage */}
 					<SectionHeader title="Data & Storage" />
-					
+
 					<ToggleItem
 						icon="sync"
 						title="Auto Sync"
@@ -340,7 +340,7 @@ const Settings = () => {
 
 					{/* Support */}
 					<SectionHeader title="Support & Legal" />
-					
+
 					<SettingItem
 						icon="help-circle"
 						title="Help & Support"
@@ -371,7 +371,7 @@ const Settings = () => {
 
 					{/* Logout */}
 					<SectionHeader title="Account" />
-					
+
 					<TouchableOpacity
 						onPress={handleLogout}
 						style={{
@@ -394,7 +394,7 @@ const Settings = () => {
 						}}>
 							<Ionicons name="log-out" size={20} color={colors.error} />
 						</View>
-						
+
 						<View style={{ flex: 1 }}>
 							<Text style={{
 								color: colors.error,
@@ -410,11 +410,11 @@ const Settings = () => {
 								Sign out of your account
 							</Text>
 						</View>
-						
-						<Ionicons 
-							name="chevron-forward" 
-							size={20} 
-							color={`${colors.error}60`} 
+
+						<Ionicons
+							name="chevron-forward"
+							size={20}
+							color={`${colors.error}60`}
 						/>
 					</TouchableOpacity>
 

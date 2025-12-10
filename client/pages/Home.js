@@ -7,7 +7,7 @@ import {
 	Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Location from 'expo-location';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';

@@ -11,7 +11,7 @@ import {
 	ActivityIndicator
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import LoadingSpinner from './LoadingSpinner';
 import ModernInput from './ModernInput';
 import PasswordInput from './PasswordInput';
@@ -22,12 +22,12 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 	const [name, setName] = useState('');
 	const [phone, setPhone] = useState('');
 	const [location, setLocation] = useState('');
-	
+
 	// Password change state
 	const [currentPassword, setCurrentPassword] = useState('');
 	const [newPassword, setNewPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
-	
+
 	// UI state
 	const [loading, setLoading] = useState(false);
 	const [showPasswordSection, setShowPasswordSection] = useState(false);
@@ -164,8 +164,8 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 			presentationStyle="pageSheet"
 			onRequestClose={handleClose}
 		>
-			<KeyboardAvoidingView 
-				style={{ flex: 1 }} 
+			<KeyboardAvoidingView
+				style={{ flex: 1 }}
 				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 			>
 				<LinearGradient
@@ -193,7 +193,7 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 						>
 							<Ionicons name="close" size={24} color="#ffffff" />
 						</TouchableOpacity>
-						
+
 						<Text style={{
 							color: '#ffffff',
 							fontSize: 18,
@@ -201,7 +201,7 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 						}}>
 							Edit Profile
 						</Text>
-						
+
 						<TouchableOpacity
 							onPress={handleSave}
 							disabled={loading}
@@ -232,8 +232,8 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 					</View>
 
 					{/* Form */}
-					<ScrollView 
-						style={{ flex: 1 }} 
+					<ScrollView
+						style={{ flex: 1 }}
 						contentContainerStyle={{ padding: 20 }}
 						showsVerticalScrollIndicator={false}
 						keyboardShouldPersistTaps="handled"
@@ -333,11 +333,11 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 								borderColor: showPasswordSection ? '#667eea' : 'rgba(255, 255, 255, 0.2)'
 							}}
 						>
-							<Ionicons 
-								name="lock-closed-outline" 
-								size={22} 
-								color={showPasswordSection ? '#667eea' : '#ffffff'} 
-								style={{ marginRight: 14 }} 
+							<Ionicons
+								name="lock-closed-outline"
+								size={22}
+								color={showPasswordSection ? '#667eea' : '#ffffff'}
+								style={{ marginRight: 14 }}
 							/>
 							<Text style={{
 								color: showPasswordSection ? '#667eea' : '#ffffff',
@@ -347,10 +347,10 @@ const EditProfileModal = ({ visible, onClose, userDetails, onProfileUpdated }) =
 							}}>
 								Change Password
 							</Text>
-							<Ionicons 
-								name={showPasswordSection ? "chevron-up" : "chevron-down"} 
-								size={20} 
-								color={showPasswordSection ? '#667eea' : 'rgba(255, 255, 255, 0.6)'} 
+							<Ionicons
+								name={showPasswordSection ? "chevron-up" : "chevron-down"}
+								size={20}
+								color={showPasswordSection ? '#667eea' : 'rgba(255, 255, 255, 0.6)'}
 							/>
 						</TouchableOpacity>
 

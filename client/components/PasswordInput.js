@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const PasswordInput = ({ 
-  value, 
-  onChangeText, 
-  placeholder, 
-  style, 
+const PasswordInput = ({
+  value,
+  onChangeText,
+  placeholder,
+  style,
   showStrengthIndicator = false,
   autoCapitalize = "none",
   matchPassword = null, // For confirm password matching
@@ -94,7 +94,7 @@ const PasswordInput = ({
   // Password matching logic
   const getMatchStatus = () => {
     if (!showMatchIndicator || !value || !matchPassword) return null;
-    
+
     const isMatching = value === matchPassword;
     return {
       isMatching,
@@ -152,8 +152,8 @@ const PasswordInput = ({
                 style={{
                   flex: 1,
                   height: 4,
-                  backgroundColor: bar <= passwordStrength.strength 
-                    ? passwordStrength.color 
+                  backgroundColor: bar <= passwordStrength.strength
+                    ? passwordStrength.color
                     : 'rgba(255, 255, 255, 0.2)',
                   marginHorizontal: 1,
                   borderRadius: 2
