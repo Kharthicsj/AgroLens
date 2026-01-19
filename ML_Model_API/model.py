@@ -82,7 +82,7 @@ image_datasets = {
 }
 
 dataloaders = {
-    x: DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True, num_workers=0)
+    x: DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
     for x in ['train', 'val', 'test']
 }
 
@@ -95,22 +95,26 @@ print("Classes:", class_names)
 # ================================
 # Load MobileNetV2
 # ================================
-model = models.mobilenet_v2(weights='IMAGENET1K_V1')
+def create_model():
+    model = models.mobilenet_v2(weights='IMAGENET1K_V1')
 
-# Freeze most layers, unfreeze last few
-for param in list(model.parameters())[:-20]:
-    param.requires_grad = False
+    # Freeze most layers, unfreeze last few
+    for param in list(model.parameters())[:-20]:
+        param.requires_grad = False
 
-# Replace classifier
-model.classifier[1] = nn.Linear(model.last_channel, num_classes)
-model = model.to(device)
+    # Replace classifier
+    model.classifier[1] = nn.Linear(model.last_channel, num_classes)
+    return model.to(device)
 
 # ================================
 # Loss & Optimizer
 # ================================
-criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
-optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-4)
-scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=5, T_mult=2)
+def create_optimizer(model):
+    criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
+    # Use SGD instead of AdamW to avoid DirectML lerp bottleneck
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=5, T_mult=2)
+    return criterion, optimizer, scheduler
 
 # ================================
 # Training Function with tqdm
@@ -181,48 +185,60 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=epochs):
     return model, history
 
 # ================================
-# Train
+# Main Execution
 # ================================
-model, history = train_model(model, criterion, optimizer, scheduler, epochs)
+if __name__ == '__main__':
+    # Create model and optimizer
+    model = create_model()
+    criterion, optimizer, scheduler = create_optimizer(model)
+    
+    # Train
+    print("\n" + "="*50)
+    print("Starting Training...")
+    print("="*50)
+    model, history = train_model(model, criterion, optimizer, scheduler, epochs)
 
-# ================================
-# Test Evaluation with tqdm
-# ================================
-model.eval()
-all_labels, all_preds = [], []
+    # ================================
+    # Test Evaluation with tqdm
+    # ================================
+    print("\n" + "="*50)
+    print("Evaluating on Test Set...")
+    print("="*50)
+    model.eval()
+    all_labels, all_preds = [], []
 
-loop = tqdm(dataloaders['test'], desc="Testing", leave=False)
-with torch.no_grad():
-    for inputs, labels in loop:
-        inputs, labels = inputs.to(device), labels.to(device)
-        outputs = model(inputs)
-        _, preds = torch.max(outputs, 1)
-        all_labels.extend(labels.cpu().numpy())
-        all_preds.extend(preds.cpu().numpy())
+    loop = tqdm(dataloaders['test'], desc="Testing", leave=False)
+    with torch.no_grad():
+        for inputs, labels in loop:
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+            all_labels.extend(labels.cpu().numpy())
+            all_preds.extend(preds.cpu().numpy())
 
-test_acc = accuracy_score(all_labels, all_preds)
-precision = precision_score(all_labels, all_preds, average='weighted')
-recall = recall_score(all_labels, all_preds, average='weighted')
-f1 = f1_score(all_labels, all_preds, average='weighted')
+    test_acc = accuracy_score(all_labels, all_preds)
+    precision = precision_score(all_labels, all_preds, average='weighted')
+    recall = recall_score(all_labels, all_preds, average='weighted')
+    f1 = f1_score(all_labels, all_preds, average='weighted')
 
-print("\nTest Results:")
-print(f"Accuracy: {test_acc:.4f}")
-print(f"Precision: {precision:.4f}")
-print(f"Recall: {recall:.4f}")
-print(f"F1 Score: {f1:.4f}")
+    print("\nTest Results:")
+    print(f"Accuracy: {test_acc:.4f}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall: {recall:.4f}")
+    print(f"F1 Score: {f1:.4f}")
 
-# ================================
-# Plot Curves
-# ================================
-plt.figure(figsize=(12,5))   
-plt.subplot(1,2,1)
-plt.plot(history['train_acc'], label='Train Acc')
-plt.plot(history['val_acc'], label='Val Acc')
-plt.legend(); plt.title("Accuracy")
+    # ================================
+    # Plot Curves
+    # ================================
+    plt.figure(figsize=(12,5))   
+    plt.subplot(1,2,1)
+    plt.plot(history['train_acc'], label='Train Acc')
+    plt.plot(history['val_acc'], label='Val Acc')
+    plt.legend(); plt.title("Accuracy")
 
-plt.subplot(1,2,2)
-plt.plot(history['train_loss'], label='Train Loss')
-plt.plot(history['val_loss'], label='Val Loss')
-plt.legend(); plt.title("Loss")
+    plt.subplot(1,2,2)
+    plt.plot(history['train_loss'], label='Train Loss')
+    plt.plot(history['val_loss'], label='Val Loss')
+    plt.legend(); plt.title("Loss")
 
-plt.show()
+    plt.show()
