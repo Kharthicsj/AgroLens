@@ -18,11 +18,17 @@ import Icon from '../components/Icon';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useTranslation } from 'react-i18next';
+import { useLanguageAwareAI } from '../utils/aiUtils';
 import { diseaseAPI } from '../services/api';
 
 const DiseaseDetection = ({ onBackPress }) => {
     const { colors } = useTheme();
     const { user } = useAuth();
+    const { currentLanguage, getCurrentLanguageInfo } = useLanguage();
+    const { t } = useTranslation();
+    const { enhanceResult } = useLanguageAwareAI();
     const [message, setMessage] = useState('');
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -240,15 +246,26 @@ const DiseaseDetection = ({ onBackPress }) => {
 
             console.log('🚀 Sending to backend:', `${process.env.EXPO_PUBLIC_API_URL}/api/disease/detect`);
             console.log('⏳ Note: First request may take 50-90 seconds if server is sleeping (Render free tier)');
+            console.log('🌐 Language context:', currentLanguage);
 
-            // Call API directly with extended timeout for Render cold starts
+            // Create language context
+            const languageContext = {
+                userLanguage: currentLanguage,
+                responseLanguage: getCurrentLanguageInfo().name,
+                nativeName: getCurrentLanguageInfo().nativeName
+            };
+
+            // Call API directly with extended timeout for Render cold starts and language context
             const response = await diseaseAPI.detect({
                 image: base64Image,
                 cropType: message.trim() || 'unknown',
                 notes: `Uploaded at ${new Date().toLocaleString()}`
-            });
+            }, languageContext);
 
             console.log('✅ Received response:', response.success);
+
+            // Enhance response with language context
+            const enhancedResponse = enhanceResult(response);
 
             if (response.success && response.data) {
                 const prediction = response.data.prediction;
@@ -428,14 +445,14 @@ const DiseaseDetection = ({ onBackPress }) => {
                             fontWeight: '700',
                             color: colors.text
                         }}>
-                            Disease Detection
+                            {t('diseaseDetection')}
                         </Text>
                         <Text style={{
                             fontSize: 13,
                             color: colors.textSecondary,
                             marginTop: 2
                         }}>
-                            AI-powered crop disease analysis
+                            {t('detectDiseases')}
                         </Text>
                     </View>
                     {messages.length > 0 && (
@@ -510,7 +527,7 @@ const DiseaseDetection = ({ onBackPress }) => {
                                             marginBottom: 12,
                                             textAlign: 'center'
                                         }}>
-                                            Disease Detection
+                                            {t('diseaseDetection')}
                                         </Text>
                                         <Text style={{
                                             fontSize: 16,
@@ -518,7 +535,7 @@ const DiseaseDetection = ({ onBackPress }) => {
                                             textAlign: 'center',
                                             lineHeight: 24
                                         }}>
-                                            Take or upload a photo of your crop to detect diseases using AI-powered analysis
+                                            {t('detectDiseases')}
                                         </Text>
                                         <TouchableOpacity
                                             onPress={handleFileUpload}

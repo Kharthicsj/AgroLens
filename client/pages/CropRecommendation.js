@@ -13,11 +13,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Icon from '../components/Icon';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import { fertilizerAPI } from '../services/api';
+import { useTranslateCrop } from '../utils/cropTranslation';
 
 const CropRecommendation = ({ onBackPress }) => {
 	const { user } = useAuth();
 	const { colors } = useTheme();
+	const { t } = useTranslation();
+	const translateCrop = useTranslateCrop();
 	const [selectedLocation, setSelectedLocation] = useState('Coimbatore');
 	const [selectedSoil, setSelectedSoil] = useState('Red Sand');
 	const [recommendations, setRecommendations] = useState([]);
@@ -182,7 +186,7 @@ const CropRecommendation = ({ onBackPress }) => {
 							color: colors.text,
 							flex: 1
 						}}>
-							Crop Recommendation
+							{t('cropRecommendation')}
 						</Text>
 					</View>
 
@@ -479,7 +483,7 @@ const CropRecommendation = ({ onBackPress }) => {
 												fontWeight: '600',
 												flex: 1
 											}}>
-												{crop}
+												{translateCrop(crop)}
 											</Text>
 										</View>
 									))}

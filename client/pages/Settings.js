@@ -10,20 +10,26 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from '../components/Icon';
+import LanguageSelectionModal from '../components/LanguageSelectionModal';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useTranslation } from 'react-i18next';
 
 const Settings = () => {
 	const navigation = useNavigation();
 	const { theme, colors, isDark, toggleTheme } = useTheme();
 	const { logout } = useAuth();
+	const { getCurrentLanguageInfo } = useLanguage();
+	const { t } = useTranslation();
 
 	// Settings state
 	const [notifications, setNotifications] = useState(true);
 	const [autoSync, setAutoSync] = useState(true);
 	const [locationServices, setLocationServices] = useState(true);
 	const [dataUsage, setDataUsage] = useState(false);
+	const [showLanguageModal, setShowLanguageModal] = useState(false);
 
 	const handleThemeToggle = (value) => {
 		toggleTheme();
@@ -32,7 +38,7 @@ const Settings = () => {
 	const handleNotificationToggle = (value) => {
 		setNotifications(value);
 		Alert.alert(
-			'Notifications',
+			t('notifications'),
 			value ? 'Push notifications have been enabled.' : 'Push notifications have been disabled.',
 			[{ text: 'OK' }]
 		);
@@ -41,7 +47,7 @@ const Settings = () => {
 	const handleAutoSyncToggle = (value) => {
 		setAutoSync(value);
 		Alert.alert(
-			'Auto Sync',
+			t('autoSync'),
 			value ? 'Data will now sync automatically.' : 'Auto sync has been disabled.',
 			[{ text: 'OK' }]
 		);
@@ -50,7 +56,7 @@ const Settings = () => {
 	const handleLocationToggle = (value) => {
 		setLocationServices(value);
 		Alert.alert(
-			'Location Services',
+			t('locationServices'),
 			value ? 'Location access has been enabled for better agricultural insights.' : 'Location services have been disabled.',
 			[{ text: 'OK' }]
 		);
@@ -184,15 +190,15 @@ const Settings = () => {
 
 	const showAbout = () => {
 		Alert.alert(
-			'About AgroLens',
-			'Version 1.0.0\n\nA comprehensive agricultural management platform designed to help farmers optimize their operations.\n\n© 2025 AgroLens. All rights reserved.',
+			t('aboutApp'),
+			`${t('version')} 1.0.0\n\nA comprehensive agricultural management platform designed to help farmers optimize their operations.\n\n© 2025 ${t('appName')}. All rights reserved.`,
 			[{ text: 'OK' }]
 		);
 	};
 
 	const showPrivacyPolicy = () => {
 		Alert.alert(
-			'Privacy Policy',
+			t('privacyPolicy'),
 			'Your privacy is important to us. We collect and use your data only to provide better agricultural insights and improve our services.\n\nWe do not share your personal information with third parties without your consent.',
 			[{ text: 'OK' }]
 		);
@@ -200,28 +206,28 @@ const Settings = () => {
 
 	const showTermsOfService = () => {
 		Alert.alert(
-			'Terms of Service',
-			'By using AgroLens, you agree to our terms and conditions. Please use the platform responsibly and in accordance with agricultural best practices.',
+			t('termsOfService'),
+			`By using ${t('appName')}, you agree to our terms and conditions. Please use the platform responsibly and in accordance with agricultural best practices.`,
 			[{ text: 'OK' }]
 		);
 	};
 
 	const showHelpSupport = () => {
 		Alert.alert(
-			'Help & Support',
-			'Need help with AgroLens?\n\n📧 Email: support@agrolens.com\n📞 Phone: +1 (555) 123-4567\n🌐 Website: www.agrolens.com\n\nOur support team is available 24/7 to assist you.',
+			t('helpSupport'),
+			`Need help with ${t('appName')}?\n\n📧 Email: support@agrolens.com\n📞 Phone: +1 (555) 123-4567\n🌐 Website: www.agrolens.com\n\nOur support team is available 24/7 to assist you.`,
 			[{ text: 'OK' }]
 		);
 	};
 
 	const handleLogout = async () => {
 		Alert.alert(
-			'Logout',
+			t('logout'),
 			'Are you sure you want to logout?',
 			[
-				{ text: 'Cancel', style: 'cancel' },
+				{ text: t('cancel'), style: 'cancel' },
 				{
-					text: 'Logout',
+					text: t('logout'),
 					style: 'destructive',
 					onPress: async () => {
 						await logout();
@@ -266,7 +272,7 @@ const Settings = () => {
 						fontWeight: '700',
 						flex: 1
 					}}>
-						Settings
+						{t('settings')}
 					</Text>
 
 					<View style={{
@@ -289,19 +295,54 @@ const Settings = () => {
 
 					<ToggleItem
 						icon="moon"
-						title="Dark Theme"
+						title={t('darkMode')}
 						subtitle="Switch between light and dark modes"
 						value={isDark}
 						onToggle={handleThemeToggle}
 						color={colors.primary}
 					/>
+					{/* Language */}
+					<SectionHeader title={t('language')} />
+
+					<SettingItem
+						icon="globe"
+						title={t('language')}
+						subtitle={getCurrentLanguageInfo().nativeName}
+						onPress={() => setShowLanguageModal(true)}
+						rightComponent={
+							<View style={{
+								backgroundColor: colors.primaryLight,
+								paddingHorizontal: 8,
+								paddingVertical: 4,
+								borderRadius: 8
+							}}>
+								<Text style={{
+									color: colors.primary,
+									fontSize: 12,
+									fontWeight: '600'
+								}}>
+									{getCurrentLanguageInfo().code.toUpperCase()}
+								</Text>
+							</View>
+						}
+						hasArrow={true}
+					/>
+					{/* Language */}
+					<SectionHeader title={t('language')} />
+
+					<SettingItem
+						icon="globe"
+						title={t('changeLanguage')}
+						subtitle={getCurrentLanguageInfo().nativeName}
+						onPress={() => setShowLanguageModal(true)}
+					/>
 
 					{/* Notifications */}
-					<SectionHeader title="Notifications" />
+					<SectionHeader title={t('notifications')} />
 
 					<ToggleItem
 						icon="notifications"
-						title="Push Notifications"
+						title={t('notifications')}
 						subtitle="Receive updates and alerts"
 						value={notifications}
 						onToggle={handleNotificationToggle}
@@ -313,7 +354,7 @@ const Settings = () => {
 
 					<ToggleItem
 						icon="sync"
-						title="Auto Sync"
+						title={t('autoSync')}
 						subtitle="Automatically sync your data"
 						value={autoSync}
 						onToggle={handleAutoSyncToggle}
@@ -322,7 +363,7 @@ const Settings = () => {
 
 					<ToggleItem
 						icon="location"
-						title="Location Services"
+						title={t('locationServices')}
 						subtitle="Allow location access for better insights"
 						value={locationServices}
 						onToggle={handleLocationToggle}
@@ -331,7 +372,7 @@ const Settings = () => {
 
 					<ToggleItem
 						icon="cellular"
-						title="Use Cellular Data"
+						title={t('dataUsage')}
 						subtitle="Download data over mobile network"
 						value={dataUsage}
 						onToggle={handleDataUsageToggle}
@@ -343,28 +384,28 @@ const Settings = () => {
 
 					<SettingItem
 						icon="help-circle"
-						title="Help & Support"
+						title={t('helpSupport')}
 						subtitle="Get help with using AgroLens"
 						onPress={showHelpSupport}
 					/>
 
 					<SettingItem
 						icon="document-text"
-						title="Privacy Policy"
+						title={t('privacyPolicy')}
 						subtitle="How we handle your data"
 						onPress={showPrivacyPolicy}
 					/>
 
 					<SettingItem
 						icon="document"
-						title="Terms of Service"
+						title={t('termsOfService')}
 						subtitle="Terms and conditions"
 						onPress={showTermsOfService}
 					/>
 
 					<SettingItem
 						icon="information-circle"
-						title="About"
+						title={t('aboutApp')}
 						subtitle="App version and information"
 						onPress={showAbout}
 					/>
@@ -401,7 +442,7 @@ const Settings = () => {
 								fontSize: 16,
 								fontWeight: '600'
 							}}>
-								Logout
+								{t('logout')}
 							</Text>
 							<Text style={{
 								color: `${colors.error}70`,
@@ -429,7 +470,7 @@ const Settings = () => {
 							fontSize: 12,
 							fontWeight: '500'
 						}}>
-							AgroLens v1.0.0
+							{t('appName')} v1.0.0
 						</Text>
 						<Text style={{
 							color: colors.textTertiary,
@@ -441,6 +482,12 @@ const Settings = () => {
 						</Text>
 					</View>
 				</ScrollView>
+
+				{/* Language Selection Modal */}
+				<LanguageSelectionModal
+					visible={showLanguageModal}
+					onClose={() => setShowLanguageModal(false)}
+				/>
 			</LinearGradient>
 		</>
 	);

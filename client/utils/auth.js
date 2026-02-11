@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user_data';
+const GUEST_MODE_KEY = 'guest_mode';
 
 export const authUtils = {
   // Store token
@@ -99,6 +100,32 @@ export const authUtils = {
       return true;
     } catch (error) {
       console.error('Error during logout:', error);
+      return false;
+    }
+  },
+
+  // Set guest mode
+  setGuestMode: async (isGuest) => {
+    try {
+      if (isGuest) {
+        await AsyncStorage.setItem(GUEST_MODE_KEY, 'true');
+      } else {
+        await AsyncStorage.removeItem(GUEST_MODE_KEY);
+      }
+      return true;
+    } catch (error) {
+      console.error('Error setting guest mode:', error);
+      return false;
+    }
+  },
+
+  // Get guest mode status
+  getGuestMode: async () => {
+    try {
+      const guestMode = await AsyncStorage.getItem(GUEST_MODE_KEY);
+      return guestMode === 'true';
+    } catch (error) {
+      console.error('Error getting guest mode:', error);
       return false;
     }
   }

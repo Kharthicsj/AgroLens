@@ -13,7 +13,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Icon from '../components/Icon';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import { fertilizerAPI } from '../services/api';
+import { useTranslateCrop } from '../utils/cropTranslation';
 
 // Fertilizer abbreviation to full name mapping
 const fertilizerMapping = {
@@ -86,6 +88,8 @@ const getFertilizerDisplayName = (fertilizerName) => {
 const FertilizerRecommendation = ({ onBackPress }) => {
     const { user } = useAuth();
     const { colors } = useTheme();
+    const { t } = useTranslation();
+    const translateCrop = useTranslateCrop();
     const [selectedLocation, setSelectedLocation] = useState('Coimbatore');
     const [selectedSoil, setSelectedSoil] = useState('Red Sand');
     const [recommendations, setRecommendations] = useState([]);
@@ -272,7 +276,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                             color: colors.text,
                             flex: 1
                         }}>
-                            Fertilizer Recommendation
+                            {t('fertilizerRecommendation')}
                         </Text>
                     </View>
 
@@ -1084,7 +1088,7 @@ const FertilizerRecommendation = ({ onBackPress }) => {
                                                     fontSize: 15,
                                                     fontWeight: selectedCrop === crop ? '600' : '400'
                                                 }}>
-                                                    {crop}
+                                                    {translateCrop(crop)}
                                                 </Text>
                                             </View>
                                             {selectedCrop === crop && (

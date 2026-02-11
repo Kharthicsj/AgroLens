@@ -137,8 +137,8 @@ export const diseaseAPI = {
     }
   },
 
-  // Detect disease from image
-  detect: async (imageData) => {
+  // Detect disease from image with language context
+  detect: async (imageData, languageContext = null) => {
     try {
       console.log('🔍 Disease API: Starting detection...');
 
@@ -150,13 +150,24 @@ export const diseaseAPI = {
 
       const url = `${process.env.EXPO_PUBLIC_API_URL}/api/disease/detect`;
       console.log('📡 Sending to:', url);
-      console.log('📦 Payload size:', JSON.stringify(imageData).length, 'bytes');
+
+      // Include language context in the request
+      const requestData = {
+        ...imageData,
+        languageContext: languageContext || {
+          userLanguage: 'en',
+          responseLanguage: 'English'
+        }
+      };
+
+      console.log('📦 Payload size:', JSON.stringify(requestData).length, 'bytes');
+      console.log('🌐 Language context:', requestData.languageContext);
 
       // Send request using axios directly
       const response = await axios({
         method: 'POST',
         url: url,
-        data: imageData,
+        data: requestData,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -242,8 +253,8 @@ export const diseaseAPI = {
 };
 
 // Helper function for disease detection (backward compatibility)
-export const detectDiseaseFromImage = async (imageData) => {
-  return diseaseAPI.detect(imageData);
+export const detectDiseaseFromImage = async (imageData, languageContext = null) => {
+  return diseaseAPI.detect(imageData, languageContext);
 };
 
 export default api;

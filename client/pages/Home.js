@@ -4,22 +4,34 @@ import {
 	Text,
 	ScrollView,
 	TouchableOpacity,
-	Alert
+	Alert,
+	Dimensions,
+	useWindowDimensions
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from '../components/Icon';
 import * as Location from 'expo-location';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import { userAPI } from '../services/api';
 import { authUtils } from '../utils/auth';
 
 const Home = ({ onNavigateToPage }) => {
 	const { user } = useAuth();
 	const { colors } = useTheme();
+	const { t } = useTranslation();
 	const [userDetails, setUserDetails] = useState(null);
 	const [currentLocation, setCurrentLocation] = useState(null);
 	const [locationLoading, setLocationLoading] = useState(true);
+	const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+
+	// Determine if landscape mode
+	const isLandscape = windowWidth > windowHeight;
+
+	// Calculate responsive padding
+	const horizontalPadding = Math.max(windowWidth * 0.05, 16);
+	const cardMargin = Math.max(windowWidth * 0.03, 12);
 
 	// Fetch user's current location
 	const getCurrentLocation = async () => {
@@ -29,7 +41,7 @@ const Home = ({ onNavigateToPage }) => {
 			if (status !== 'granted') {
 				// Silently handle permission denial - location is optional
 				setLocationLoading(false);
-				setCurrentLocation('Location not available');
+				setCurrentLocation(t('locationNotAvailable'));
 				return;
 			}
 
@@ -85,37 +97,50 @@ const Home = ({ onNavigateToPage }) => {
 
 	const FeatureCard = ({ icon, title, description, color, onPress }) => (
 		<TouchableOpacity
-			style={{
-				backgroundColor: colors.surface,
-				borderRadius: 16,
-				padding: 20,
-				marginBottom: 16,
-				borderLeftWidth: 4,
-				borderLeftColor: color
-			}}
 			onPress={onPress}
+			style={{
+				backgroundColor: 'rgba(26, 26, 62, 0.6)',
+				borderRadius: 16,
+				padding: isLandscape ? 16 : 20,
+				marginBottom: cardMargin,
+				borderLeftWidth: 5,
+				borderLeftColor: color,
+				minHeight: isLandscape ? 100 : 115,
+				shadowColor: '#000',
+				shadowOffset: { width: 0, height: 3 },
+				shadowOpacity: 0.15,
+				shadowRadius: 6,
+				zIndex: 1,
+				position: 'relative'
+			}}
 		>
-			<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+			<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
 				<View style={{
+					width: isLandscape ? 40 : 46,
+					height: isLandscape ? 40 : 46,
+					borderRadius: 12,
 					backgroundColor: `${color}20`,
-					borderRadius: 10,
-					padding: 8,
-					marginRight: 12
+					justifyContent: 'center',
+					alignItems: 'center',
+					marginRight: 14
 				}}>
-					<Icon name={icon} size={24} color={color} />
+					<Icon name={icon} size={isLandscape ? 22 : 24} color={color} />
 				</View>
 				<Text style={{
-					fontSize: 18,
-					fontWeight: '600',
-					color: colors.text
+					fontSize: isLandscape ? 17 : 18,
+					fontWeight: '700',
+					color: '#ffffff',
+					flex: 1,
+					letterSpacing: 0.2
 				}}>
 					{title}
 				</Text>
 			</View>
 			<Text style={{
-				fontSize: 14,
-				color: colors.textSecondary,
-				lineHeight: 20
+				fontSize: isLandscape ? 12 : 13,
+				color: 'rgba(255, 255, 255, 0.7)',
+				lineHeight: isLandscape ? 17 : 19,
+				paddingLeft: isLandscape ? 54 : 60
 			}}>
 				{description}
 			</Text>
@@ -130,26 +155,31 @@ const Home = ({ onNavigateToPage }) => {
 			>
 				<ScrollView
 					style={{ flex: 1 }}
-					contentContainerStyle={{ padding: 24, paddingBottom: 100 }}
+					contentContainerStyle={{
+						paddingHorizontal: horizontalPadding,
+						paddingTop: 30,
+						paddingBottom: 100,
+						flexGrow: 1
+					}}
 					showsVerticalScrollIndicator={false}
 				>
 					{/* Welcome Section */}
-					<View style={{ marginBottom: 32 }}>
+					<View style={{ marginBottom: isLandscape ? 20 : 32 }}>
 						<Text style={{
-							fontSize: 28,
+							fontSize: isLandscape ? 24 : 28,
 							fontWeight: '800',
 							color: colors.text,
 							marginBottom: 8
 						}}>
-							Welcome Home{displayUser?.name ? `, ${displayUser.name}` : ''}!
+							{t('hello')}{displayUser?.name ? `, ${displayUser.name}` : ''}!
 						</Text>
 
 						<Text style={{
-							fontSize: 16,
+							fontSize: isLandscape ? 14 : 16,
 							color: colors.textSecondary,
 							lineHeight: 22
 						}}>
-							Manage your agricultural activities and monitor your crops with ease
+							{t('smartFarming')}
 						</Text>
 
 						{/* User current location */}
@@ -169,7 +199,7 @@ const Home = ({ onNavigateToPage }) => {
 									fontSize: 14,
 									marginLeft: 6
 								}}>
-									Fetching location...
+									{t('loading')}
 								</Text>
 							</View>
 						) : currentLocation ? (
@@ -196,34 +226,34 @@ const Home = ({ onNavigateToPage }) => {
 
 					{/* Features Section */}
 					<Text style={{
-						fontSize: 20,
+						fontSize: isLandscape ? 18 : 20,
 						fontWeight: '700',
 						color: colors.text,
-						marginBottom: 16
+						marginBottom: isLandscape ? 12 : 16
 					}}>
-						Farm Management
+						{t('farmManagement')}
 					</Text>
 
 					<FeatureCard
 						icon="leaf-outline"
-						title="Crop Recommendation"
-						description="Get personalized crop suggestions based on soil type and climate conditions to maximize your yield"
+						title={t('cropRecommendation')}
+						description={t('detailedCropRecommendations')}
 						color="#667eea"
 						onPress={() => onNavigateToPage && onNavigateToPage('CropRecommendation')}
 					/>
 
 					<FeatureCard
 						icon="nutrition-outline"
-						title="Fertilizer Recommendation"
-						description="Receive precise fertilizer recommendations tailored to your crop requirements"
+						title={t('fertilizerRecommendation')}
+						description={t('detailedFertilizerGuidance')}
 						color="#3498db"
 						onPress={() => onNavigateToPage && onNavigateToPage('FertilizerRecommendation')}
 					/>
 
 					<FeatureCard
 						icon="bug-outline"
-						title="Disease Detection"
-						description="Early detection and identification of crop diseases using AI-powered image analysis to protect your harvest"
+						title={t('diseaseDetection')}
+						description={t('detailedDetectDiseases')}
 						color="#e74c3c"
 						onPress={() => onNavigateToPage && onNavigateToPage('DiseaseDetection')}
 					/>

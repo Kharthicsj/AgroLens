@@ -14,18 +14,24 @@ import Icon from '../components/Icon';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useTranslation } from 'react-i18next';
 import { userAPI } from '../services/api';
 import EditProfileModal from '../components/EditProfileModal';
+import LanguageSelectionModal from '../components/LanguageSelectionModal';
 
 const UserProfile = () => {
 	const navigation = useNavigation();
 	const { logout } = useAuth();
 	const { colors } = useTheme();
+	const { getCurrentLanguageInfo } = useLanguage();
+	const { t } = useTranslation();
 	const [userDetails, setUserDetails] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
 	const [error, setError] = useState(null);
 	const [editModalVisible, setEditModalVisible] = useState(false);
+	const [showLanguageModal, setShowLanguageModal] = useState(false);
 
 	// Fetch user data from API
 	const fetchUserData = async (showRefreshLoader = false) => {
@@ -351,16 +357,15 @@ const UserProfile = () => {
 						marginTop: 32,
 						marginBottom: 16
 					}}>
-						Settings
+						{t('settings')}
 					</Text>
 
 					<ProfileItem
-						icon="notifications-outline"
-						title="Notifications"
-						value="Enabled"
-						onPress={handleSettingsNavigation}
+						icon="globe"
+						title={t('language')}
+						value={getCurrentLanguageInfo().nativeName}
+						onPress={() => setShowLanguageModal(true)}
 					/>
-
 					<ProfileItem
 						icon="shield-checkmark-outline"
 						title="Privacy & Security"
@@ -417,6 +422,12 @@ const UserProfile = () => {
 					onClose={() => setEditModalVisible(false)}
 					userDetails={userDetails}
 					onProfileUpdated={handleProfileUpdated}
+				/>
+
+				{/* Language Selection Modal */}
+				<LanguageSelectionModal
+					visible={showLanguageModal}
+					onClose={() => setShowLanguageModal(false)}
 				/>
 			</LinearGradient>
 		</SafeAreaView>
