@@ -1,0 +1,64 @@
+# ========================================
+# STEP-BY-STEP INSTALLATION FOR AMD RX 6600M
+# ========================================
+
+# Open PowerShell as Administrator and run these commands:
+
+# Step 1: Navigate to your project directory
+cd "E:\coding\Full_Stack_Course\Project 25 - AgroLens\MachineLearning Models"
+
+# Step 2: Install PyTorch with DirectML (Best for Windows + AMD GPU)
+# DirectML provides AMD GPU acceleration on Windows
+C:/Python313/python.exe -m pip install torch-directml
+C:/Python313/python.exe -m pip install torchvision torchaudio
+
+# Step 3: Install other dependencies
+C:/Python313/python.exe -m pip install scikit-learn matplotlib numpy tqdm Pillow
+
+# Step 4: Test GPU detection
+C:/Python313/python.exe test_gpu.py
+
+# ========================================
+# ALTERNATIVE: Standard PyTorch (if DirectML doesn't work)
+# ========================================
+
+# If DirectML doesn't detect your GPU, try standard PyTorch:
+C:/Python313/python.exe -m pip uninstall torch-directml torch torchvision torchaudio -y
+C:/Python313/python.exe -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# Note: Standard PyTorch won't use AMD GPU on Windows, but DirectML should work
+
+# ========================================
+# RUN TRAINING
+# ========================================
+
+# After successful installation and GPU detection:
+C:/Python313/python.exe model.py
+
+# ========================================
+# WHAT TO EXPECT
+# ========================================
+
+# With GPU (AMD RX 6600M):
+# - Batch size: 64
+# - Training speed: ~10-30 seconds per epoch (depending on dataset size)
+# - GPU utilization: 70-95%
+
+# With CPU only:
+# - Batch size: 32 (recommended to reduce)
+# - Training speed: 5-15 minutes per epoch
+# - High CPU usage
+
+# ========================================
+# MONITORING GPU USAGE
+# ========================================
+
+# Option 1: Windows Task Manager
+# - Press Ctrl + Shift + Esc
+# - Go to Performance tab
+# - Look for GPU section
+
+# Option 2: AMD Radeon Software
+# - Press Alt + R
+# - Go to Performance > Metrics
+# - Monitor GPU usage during training
