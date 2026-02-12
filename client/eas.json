@@ -1,0 +1,36 @@
+{
+	"cli": {
+		"version": ">= 16.25.1",
+		"appVersionSource": "local"
+	},
+	"build": {
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal",
+			"android": {
+				"gradleCommand": ":app:assembleDebug",
+				"buildType": "apk"
+			},
+			"env": {
+				"NODE_ENV": "development"
+			}
+		},
+		"preview": {
+			"distribution": "internal",
+			"android": {
+				"buildType": "apk"
+			}
+		},
+		"production": {
+			"android": {
+				"buildType": "apk"
+			},
+			"env": {
+				"NODE_ENV": "production"
+			}
+		}
+	},
+	"submit": {
+		"production": {}
+	}
+}

@@ -1,0 +1,23 @@
+# Flask and Web Server (Production-ready versions)
+flask==3.0.0
+gunicorn==21.2.0
+werkzeug==3.0.1
+
+# CORS Support (for Node.js backend communication)
+flask-cors==4.0.0
+
+# Image Processing
+Pillow==10.1.0
+
+# Scientific Computing (Required for PyTorch)
+numpy==1.26.2
+
+# HTTP Requests (for downloading images from Cloudinary URLs)
+requests==2.31.0
+urllib3==2.1.0
+
+# PyTorch and Deep Learning (CPU-only for Render deployment)
+# Using --extra-index-url to search both PyPI and PyTorch repo
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.5.1+cpu
+torchvision==0.20.1+cpu
