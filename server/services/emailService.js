@@ -1,26 +1,16 @@
 import nodemailer from 'nodemailer';
-import dns from 'dns';
-
-dns.setDefaultResultOrder('ipv4first');
 
 const createTransporter = () => {
     return nodemailer.createTransport({
-        // Use the direct IPv4 for Google's SMTP to bypass DNS resolution issues on Render
-        host: '74.125.130.108',
-        port: 465,
-        secure: true,
+        service: 'gmail',
         auth: {
+            type: 'OAuth2',
             user: process.env.NODEMAILER_MAIL,
-            pass: process.env.NODEMAILER_APP_PASSWORD
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            refreshToken: process.env.GOOGLE_REFRESH_TOKEN
         },
-        // Force IPv4 and extend timeouts drastically for Render's networking
-        addressFamily: 4,
-        connectionTimeout: 60000, // 60s
-        greetingTimeout: 30000,   // 30s
-        socketTimeout: 60000,     // 60s
         tls: {
-            // Servername is REQUIREMENT when using a direct IP to match the SSL cert
-            servername: 'smtp.gmail.com',
             rejectUnauthorized: false
         }
     });
