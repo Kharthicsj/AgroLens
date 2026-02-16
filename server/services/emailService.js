@@ -14,9 +14,9 @@ const createTransporter = () => {
             rejectUnauthorized: false, // Accept self-signed certificates
             ciphers: 'SSLv3'
         },
-        connectionTimeout: 10000, // 10 seconds
-        greetingTimeout: 10000,
-        socketTimeout: 10000
+        connectionTimeout: 30000, // 10 seconds
+        greetingTimeout: 30000,
+        socketTimeout: 30000
     });
 };
 
