@@ -1,60 +1,50 @@
-const sendEmailViaBrevo = async (to, subject, html) => {
-    const BREVO_API_KEY = process.env.BREVO_API_KEY;
-    const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || process.env.NODEMAILER_MAIL || 'noreply@agrolens.com';
+const sendEmailViaElasticEmail = async (to, subject, html) => {
+    const ELASTIC_API_KEY = process.env.ELASTIC_EMAIL_API_KEY;
+    const FROM_EMAIL = process.env.ELASTIC_FROM_EMAIL || process.env.NODEMAILER_MAIL || 'noreply@agrolens.com';
     const FROM_NAME = process.env.NODEMAILER_APP_NAME || 'AgroLens';
 
-    if (!BREVO_API_KEY) {
-        throw new Error('BREVO_API_KEY not configured. Please add it to your environment variables.');
+    if (!ELASTIC_API_KEY) {
+        throw new Error('ELASTIC_EMAIL_API_KEY not configured. Please add it to your environment variables.');
     }
 
     try {
-        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        const response = await fetch('https://api.elasticemail.com/v2/email/send', {
             method: 'POST',
             headers: {
-                'api-key': BREVO_API_KEY,
-                'Content-Type': 'application/json',
-                'accept': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: JSON.stringify({
-                sender: {
-                    name: FROM_NAME,
-                    email: FROM_EMAIL
-                },
-                to: [
-                    {
-                        email: to
-                    }
-                ],
+            body: new URLSearchParams({
+                apikey: ELASTIC_API_KEY,
+                from: FROM_EMAIL,
+                fromName: FROM_NAME,
+                to: to,
                 subject: subject,
-                htmlContent: html
+                bodyHtml: html,
+                isTransactional: 'true'
             })
         });
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
+        const data = await response.json();
 
-            // Handle specific Brevo API errors
-            if (response.status === 401) {
-                throw new Error('Invalid Brevo API key. Please check your BREVO_API_KEY.');
-            } else if (response.status === 400) {
-                const errorMsg = errorData.message || 'Bad request';
-                if (errorMsg.includes('sender')) {
-                    throw new Error('Sender email not verified. Please verify your sender email in Brevo dashboard.');
-                }
-                throw new Error(`Email validation failed: ${errorMsg}`);
-            } else if (response.status === 402) {
-                throw new Error('Daily email limit exceeded. Please upgrade your Brevo plan or try again tomorrow.');
+        if (!response.ok || !data.success) {
+            // Handle Elastic Email API errors
+            const errorMsg = data.error || 'Unknown error';
+
+            if (errorMsg.includes('Unauthorized')) {
+                throw new Error('Invalid Elastic Email API key. Please check your ELASTIC_EMAIL_API_KEY.');
+            } else if (errorMsg.includes('not verified') || errorMsg.includes('sender')) {
+                throw new Error('Sender email not verified. Please verify your sender email in Elastic Email dashboard.');
+            } else if (errorMsg.includes('limit')) {
+                throw new Error('Daily email limit exceeded. Your free tier allows 100 emails/day.');
             } else {
-                throw new Error(errorData.message || `Brevo API error: ${response.status}`);
+                throw new Error(`Elastic Email API error: ${errorMsg}`);
             }
         }
 
-        const data = await response.json();
-
         return {
             success: true,
-            messageId: data.messageId,
-            service: 'Brevo'
+            messageId: data.data.messageid || data.data.transactionid,
+            service: 'ElasticEmail'
         };
     } catch (error) {
         if (error.message.includes('fetch') || error.code === 'ENOTFOUND') {
@@ -232,8 +222,7 @@ const generateOTPEmailTemplate = (otp, appName) => {
 
 /**
  * Send OTP email with proper error handling
- * Uses Brevo API (HTTPS) - more reliable than SMTP on cloud platforms
- * Can send to ANY email address (no domain verification needed)
+ * Uses Elastic Email API (HTTPS) - reliable and works immediately
  */
 export const sendOTPEmail = async (email, otp) => {
     // Validate inputs
@@ -254,15 +243,15 @@ export const sendOTPEmail = async (email, otp) => {
     console.log('📧 Sending OTP email to:', email);
 
     try {
-        const result = await sendEmailViaBrevo(email, subject, html);
-        console.log('✅ OTP email sent successfully via Brevo');
+        const result = await sendEmailViaElasticEmail(email, subject, html);
+        console.log('✅ OTP email sent successfully via Elastic Email');
         console.log('   Message ID:', result.messageId);
         return result;
     } catch (error) {
         console.error('❌ Failed to send OTP email:', error.message);
 
         // Provide user-friendly error messages
-        if (error.message.includes('BREVO_API_KEY not configured')) {
+        if (error.message.includes('ELASTIC_EMAIL_API_KEY not configured')) {
             throw new Error('Email service not configured. Please contact support.');
         } else if (error.message.includes('Sender email not verified')) {
             throw new Error('Email service configuration error. Please contact support.');
