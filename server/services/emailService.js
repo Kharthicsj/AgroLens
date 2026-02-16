@@ -1,22 +1,13 @@
 import nodemailer from 'nodemailer';
 
-// Create transporter with explicit configuration for cloud platforms
+// Create transporter
 const createTransporter = () => {
     return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587, // Use port 587 for TLS (works on most cloud platforms)
-        secure: false, // true for 465, false for other ports
+        service: 'gmail',
         auth: {
             user: process.env.NODEMAILER_MAIL,
             pass: process.env.NODEMAILER_APP_PASSWORD
-        },
-        tls: {
-            rejectUnauthorized: false, // Accept self-signed certificates
-            ciphers: 'SSLv3'
-        },
-        connectionTimeout: 30000, // 10 seconds
-        greetingTimeout: 30000,
-        socketTimeout: 30000
+        }
     });
 };
 
@@ -211,27 +202,12 @@ export const sendOTPEmail = async (email, otp) => {
         };
 
         console.log('Sending OTP email to:', email);
-
-        // Verify transporter connection before sending
-        await transporter.verify();
-        console.log('SMTP connection verified');
-
         const info = await transporter.sendMail(mailOptions);
         console.log('OTP email sent successfully:', info.messageId);
         return { success: true, messageId: info.messageId };
     } catch (error) {
         console.error('Error sending OTP email:', error);
-
-        // Provide more detailed error information
-        if (error.code === 'ETIMEDOUT') {
-            throw new Error('Email service connection timeout. Please check your network settings or try again later.');
-        } else if (error.code === 'EAUTH') {
-            throw new Error('Email authentication failed. Please verify your credentials.');
-        } else if (error.responseCode === 535) {
-            throw new Error('Invalid email credentials. Please check NODEMAILER_MAIL and NODEMAILER_APP_PASSWORD.');
-        }
-
-        throw new Error(`Failed to send OTP email: ${error.message}`);
+        throw new Error('Failed to send OTP email');
     }
 };
 
