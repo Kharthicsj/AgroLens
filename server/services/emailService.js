@@ -1,16 +1,123 @@
 import nodemailer from 'nodemailer';
 
-const createTransporter = () => {
-    return nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            type: 'OAuth2',
-            user: process.env.NODEMAILER_MAIL,
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            refreshToken: process.env.GOOGLE_REFRESH_TOKEN
-        }
-    });
+// Multiple transporter configurations to try in sequence
+const createTransporters = () => {
+    const transporters = [];
+
+    // Configuration 1: OAuth2 with port 587 (STARTTLS)
+    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN) {
+        transporters.push({
+            name: 'OAuth2-587',
+            config: {
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false,
+                auth: {
+                    type: 'OAuth2',
+                    user: process.env.NODEMAILER_MAIL,
+                    clientId: process.env.GOOGLE_CLIENT_ID,
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                    refreshToken: process.env.GOOGLE_REFRESH_TOKEN
+                },
+                connectionTimeout: 30000,
+                greetingTimeout: 30000,
+                socketTimeout: 30000,
+                tls: {
+                    rejectUnauthorized: false,
+                    minVersion: 'TLSv1.2'
+                }
+            }
+        });
+
+        // Configuration 2: OAuth2 with port 465 (SSL)
+        transporters.push({
+            name: 'OAuth2-465',
+            config: {
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    type: 'OAuth2',
+                    user: process.env.NODEMAILER_MAIL,
+                    clientId: process.env.GOOGLE_CLIENT_ID,
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                    refreshToken: process.env.GOOGLE_REFRESH_TOKEN
+                },
+                connectionTimeout: 30000,
+                greetingTimeout: 30000,
+                socketTimeout: 30000,
+                tls: {
+                    rejectUnauthorized: false
+                }
+            }
+        });
+    }
+
+    // Configuration 3: App Password with port 587
+    if (process.env.NODEMAILER_APP_PASSWORD) {
+        transporters.push({
+            name: 'AppPass-587',
+            config: {
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false,
+                auth: {
+                    user: process.env.NODEMAILER_MAIL,
+                    pass: process.env.NODEMAILER_APP_PASSWORD
+                },
+                connectionTimeout: 30000,
+                greetingTimeout: 30000,
+                socketTimeout: 30000,
+                tls: {
+                    rejectUnauthorized: false,
+                    minVersion: 'TLSv1.2'
+                }
+            }
+        });
+
+        // Configuration 4: App Password with port 465
+        transporters.push({
+            name: 'AppPass-465',
+            config: {
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: process.env.NODEMAILER_MAIL,
+                    pass: process.env.NODEMAILER_APP_PASSWORD
+                },
+                connectionTimeout: 30000,
+                greetingTimeout: 30000,
+                socketTimeout: 30000,
+                tls: {
+                    rejectUnauthorized: false
+                }
+            }
+        });
+
+        // Configuration 5: App Password with port 2525 (alternative port, less likely to be blocked)
+        transporters.push({
+            name: 'AppPass-2525',
+            config: {
+                host: 'smtp.gmail.com',
+                port: 2525,
+                secure: false,
+                auth: {
+                    user: process.env.NODEMAILER_MAIL,
+                    pass: process.env.NODEMAILER_APP_PASSWORD
+                },
+                connectionTimeout: 30000,
+                greetingTimeout: 30000,
+                socketTimeout: 30000,
+                tls: {
+                    rejectUnauthorized: false,
+                    minVersion: 'TLSv1.2'
+                }
+            }
+        });
+    }
+
+    return transporters;
 };
 
 // Generate HTML email template
@@ -180,37 +287,66 @@ const generateOTPEmailTemplate = (otp, appName) => {
 };
 
 // Send OTP email
+// Send OTP email with multiple fallback configurations
 export const sendOTPEmail = async (email, otp) => {
-    try {
-        // Validate email and OTP
-        if (!email || !otp) {
-            throw new Error('Email and OTP are required');
-        }
-
-        // Check environment variables
-        if (!process.env.NODEMAILER_MAIL || !process.env.NODEMAILER_APP_PASSWORD) {
-            console.error('Missing email environment variables');
-            throw new Error('Email service not configured properly');
-        }
-
-        const transporter = createTransporter();
-        const appName = process.env.NODEMAILER_APP_NAME || 'AgroLens';
-
-        const mailOptions = {
-            from: `"${appName}" <${process.env.NODEMAILER_MAIL}>`,
-            to: email,
-            subject: `${appName} - Password Reset OTP`,
-            html: generateOTPEmailTemplate(otp, appName)
-        };
-
-        console.log('Sending OTP email to:', email);
-        const info = await transporter.sendMail(mailOptions);
-        console.log('OTP email sent successfully:', info.messageId);
-        return { success: true, messageId: info.messageId };
-    } catch (error) {
-        console.error('Error sending OTP email:', error);
-        throw new Error('Failed to send OTP email');
+    // Validate email and OTP
+    if (!email || !otp) {
+        throw new Error('Email and OTP are required');
     }
+
+    // Check environment variables
+    if (!process.env.NODEMAILER_MAIL) {
+        console.error('Missing email environment variables');
+        throw new Error('Email service not configured properly');
+    }
+
+    const appName = process.env.NODEMAILER_APP_NAME || 'AgroLens';
+    const mailOptions = {
+        from: `"${appName}" <${process.env.NODEMAILER_MAIL}>`,
+        to: email,
+        subject: `${appName} - Password Reset OTP`,
+        html: generateOTPEmailTemplate(otp, appName)
+    };
+
+    console.log('Sending OTP email to:', email);
+
+    const transporters = createTransporters();
+    
+    if (transporters.length === 0) {
+        throw new Error('No email authentication configured. Please set up OAuth2 or App Password.');
+    }
+
+    const errors = [];
+
+    // Try each transporter configuration
+    for (const { name, config } of transporters) {
+        try {
+            console.log(`Attempting to send email using ${name}...`);
+            const transporter = nodemailer.createTransport(config);
+            
+            // Skip verification and try sending directly (verification can also timeout on Render)
+            const info = await transporter.sendMail(mailOptions);
+            console.log(`✓ OTP email sent successfully using ${name}:`, info.messageId);
+            
+            // Close the transporter
+            transporter.close();
+            
+            return { success: true, messageId: info.messageId, method: name };
+        } catch (error) {
+            console.log(`✗ ${name} failed:`, error.code || error.message);
+            errors.push({ method: name, error: error.message, code: error.code });
+            // Continue to next transporter
+            continue;
+        }
+    }
+
+    // If all transporters failed
+    console.error('All email sending methods failed:');
+    errors.forEach(({ method, error, code }) => {
+        console.error(`  - ${method}: ${code || 'ERROR'} - ${error}`);
+    });
+
+    throw new Error('Failed to send OTP email. All connection methods failed. Please check your email configuration and network.');
 };
 
 export default { sendOTPEmail };
