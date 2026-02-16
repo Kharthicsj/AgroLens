@@ -10,11 +10,14 @@ const createTransporter = () => {
             user: process.env.NODEMAILER_MAIL,
             pass: process.env.NODEMAILER_APP_PASSWORD
         },
-        connectionTimeout: 20000,
-        greetingTimeout: 5000,
-        socketTimeout: 15000,
+        connectionTimeout: 30000, // Increase to 30s
+        greetingTimeout: 10000,   // Increase to 10s
+        socketTimeout: 45000,     // Increase to 45s
+        dnsTimeout: 10000,
+        addressFamily: 4,
         tls: {
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
+            servername: 'smtp.gmail.com'
         }
     });
 };
