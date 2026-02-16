@@ -1,133 +1,52 @@
-import nodemailer from 'nodemailer';
-import dns from 'dns';
+const sendEmailViaResend = async (to, subject, html) => {
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
-// Force IPv4 resolution globally
-dns.setDefaultResultOrder('ipv4first');
-
-// Gmail SMTP IPv4 addresses (hardcoded fallback to bypass DNS issues)
-const GMAIL_SMTP_IPS = [
-    '142.250.185.108',  // smtp.gmail.com IPv4
-    '142.250.185.109',
-    '74.125.130.108',
-    '64.233.184.108'
-];
-
-// Multiple transporter configurations to try in sequence
-const createTransporters = () => {
-    const transporters = [];
-
-    // Try with direct IP addresses first (most reliable on Render)
-    if (process.env.NODEMAILER_APP_PASSWORD) {
-        // Configuration 1: Direct IPv4 with port 587
-        GMAIL_SMTP_IPS.forEach((ip, index) => {
-            transporters.push({
-                name: `AppPass-587-IP${index + 1}`,
-                config: {
-                    host: ip,
-                    port: 587,
-                    secure: false,
-                    family: 4,
-                    auth: {
-                        user: process.env.NODEMAILER_MAIL,
-                        pass: process.env.NODEMAILER_APP_PASSWORD
-                    },
-                    connectionTimeout: 45000,
-                    greetingTimeout: 45000,
-                    socketTimeout: 45000,
-                    tls: {
-                        servername: 'smtp.gmail.com',  // Required for SSL cert validation with IP
-                        rejectUnauthorized: false,
-                        minVersion: 'TLSv1.2'
-                    },
-                    requireTLS: true
-                }
-            });
-        });
-
-        // Configuration 2: Direct IPv4 with port 465
-        transporters.push({
-            name: 'AppPass-465-DirectIP',
-            config: {
-                host: GMAIL_SMTP_IPS[0],
-                port: 465,
-                secure: true,
-                family: 4,
-                auth: {
-                    user: process.env.NODEMAILER_MAIL,
-                    pass: process.env.NODEMAILER_APP_PASSWORD
-                },
-                connectionTimeout: 45000,
-                greetingTimeout: 45000,
-                socketTimeout: 45000,
-                tls: {
-                    servername: 'smtp.gmail.com',
-                    rejectUnauthorized: false
-                }
-            }
-        });
-
-        // Configuration 3: Hostname with aggressive IPv4 forcing
-        transporters.push({
-            name: 'AppPass-587-Host',
-            config: {
-                host: 'smtp.gmail.com',
-                port: 587,
-                secure: false,
-                family: 4,
-                auth: {
-                    user: process.env.NODEMAILER_MAIL,
-                    pass: process.env.NODEMAILER_APP_PASSWORD
-                },
-                connectionTimeout: 45000,
-                greetingTimeout: 45000,
-                socketTimeout: 45000,
-                lookup: (hostname, options, callback) => {
-                    // Force IPv4 lookup
-                    dns.resolve4(hostname, (err, addresses) => {
-                        if (err) {
-                            callback(err);
-                        } else {
-                            callback(null, addresses[0], 4);
-                        }
-                    });
-                },
-                tls: {
-                    rejectUnauthorized: false,
-                    minVersion: 'TLSv1.2'
-                }
-            }
-        });
+    if (!RESEND_API_KEY) {
+        throw new Error('RESEND_API_KEY not configured. Please add it to your environment variables.');
     }
 
-    // OAuth2 configurations with DNS override
-    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN) {
-        transporters.push({
-            name: 'OAuth2-587',
-            config: {
-                host: GMAIL_SMTP_IPS[0],
-                port: 587,
-                secure: false,
-                family: 4,
-                auth: {
-                    type: 'OAuth2',
-                    user: process.env.NODEMAILER_MAIL,
-                    clientId: process.env.GOOGLE_CLIENT_ID,
-                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                    refreshToken: process.env.GOOGLE_REFRESH_TOKEN
-                },
-                connectionTimeout: 45000,
-                greetingTimeout: 45000,
-                socketTimeout: 45000,
-                tls: {
-                    servername: 'smtp.gmail.com',
-                    rejectUnauthorized: false,
-                    minVersion: 'TLSv1.2'
-                }
-            }
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: FROM_EMAIL,
+                to: [to],
+                subject: subject,
+                html: html
+            })
         });
-    }
 
-    return transporters;
+        const data = await response.json();
+
+        if (!response.ok) {
+            // Handle specific Resend API errors
+            if (response.status === 401) {
+                throw new Error('Invalid Resend API key. Please check your RESEND_API_KEY.');
+            } else if (response.status === 422) {
+                throw new Error(`Email validation failed: ${data.message || 'Invalid email format'}`);
+            } else if (response.status === 429) {
+                throw new Error('Rate limit exceeded. Please try again later.');
+            } else {
+                throw new Error(data.message || `Resend API error: ${response.status}`);
+            }
+        }
+
+        return {
+            success: true,
+            messageId: data.id,
+            service: 'Resend'
+        };
+    } catch (error) {
+        if (error.message.includes('fetch')) {
+            throw new Error('Network error. Unable to reach email service.');
+        }
+        throw error;
+    }
 };
 
 // Generate HTML email template
@@ -296,67 +215,50 @@ const generateOTPEmailTemplate = (otp, appName) => {
     `;
 };
 
-// Send OTP email
-// Send OTP email with multiple fallback configurations
+/**
+ * Send OTP email with proper error handling
+ * Uses Resend API (HTTPS) - more reliable than SMTP on cloud platforms
+ */
 export const sendOTPEmail = async (email, otp) => {
-    // Validate email and OTP
+    // Validate inputs
     if (!email || !otp) {
         throw new Error('Email and OTP are required');
     }
 
-    // Check environment variables
-    if (!process.env.NODEMAILER_MAIL) {
-        console.error('Missing email environment variables');
-        throw new Error('Email service not configured properly');
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        throw new Error('Invalid email format');
     }
 
     const appName = process.env.NODEMAILER_APP_NAME || 'AgroLens';
-    const mailOptions = {
-        from: `"${appName}" <${process.env.NODEMAILER_MAIL}>`,
-        to: email,
-        subject: `${appName} - Password Reset OTP`,
-        html: generateOTPEmailTemplate(otp, appName)
-    };
+    const subject = `${appName} - Password Reset OTP`;
+    const html = generateOTPEmailTemplate(otp, appName);
 
-    console.log('Sending OTP email to:', email);
+    console.log('📧 Sending OTP email to:', email);
 
-    const transporters = createTransporters();
-    
-    if (transporters.length === 0) {
-        throw new Error('No email authentication configured. Please set up OAuth2 or App Password.');
-    }
+    try {
+        const result = await sendEmailViaResend(email, subject, html);
+        console.log('✅ OTP email sent successfully via Resend');
+        console.log('   Message ID:', result.messageId);
+        return result;
+    } catch (error) {
+        console.error('❌ Failed to send OTP email:', error.message);
 
-    const errors = [];
-
-    // Try each transporter configuration
-    for (const { name, config } of transporters) {
-        try {
-            console.log(`Attempting to send email using ${name}...`);
-            const transporter = nodemailer.createTransport(config);
-            
-            // Skip verification and try sending directly (verification can also timeout on Render)
-            const info = await transporter.sendMail(mailOptions);
-            console.log(`✓ OTP email sent successfully using ${name}:`, info.messageId);
-            
-            // Close the transporter
-            transporter.close();
-            
-            return { success: true, messageId: info.messageId, method: name };
-        } catch (error) {
-            console.log(`✗ ${name} failed:`, error.code || error.message);
-            errors.push({ method: name, error: error.message, code: error.code });
-            // Continue to next transporter
-            continue;
+        // Provide user-friendly error messages
+        if (error.message.includes('RESEND_API_KEY not configured')) {
+            throw new Error('Email service not configured. Please contact support.');
+        } else if (error.message.includes('Invalid email format')) {
+            throw new Error('Invalid email address. Please check and try again.');
+        } else if (error.message.includes('Rate limit exceeded')) {
+            throw new Error('Too many requests. Please try again in a few minutes.');
+        } else if (error.message.includes('Network error')) {
+            throw new Error('Network error. Please check your internet connection and try again.');
+        } else {
+            // Generic error for production (don't expose internal details)
+            throw new Error('Failed to send OTP email. Please try again later or contact support.');
         }
     }
-
-    // If all transporters failed
-    console.error('All email sending methods failed:');
-    errors.forEach(({ method, error, code }) => {
-        console.error(`  - ${method}: ${code || 'ERROR'} - ${error}`);
-    });
-
-    throw new Error('Failed to send OTP email. All connection methods failed. Please check your email configuration and network.');
 };
 
 export default { sendOTPEmail };
