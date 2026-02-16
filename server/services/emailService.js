@@ -1,4 +1,7 @@
 import nodemailer from 'nodemailer';
+import dns from 'dns';
+
+dns.setDefaultResultOrder('ipv4first');
 
 // Create transporter - Simple configuration like reference code
 const createTransporter = () => {
@@ -14,11 +17,10 @@ const createTransporter = () => {
         connectionTimeout: 30000, // Increase to 30s
         greetingTimeout: 10000,   // Increase to 10s
         socketTimeout: 45000,     // Increase to 45s
-        dnsTimeout: 10000,
         addressFamily: 4,
         tls: {
+            servername: 'smtp.gmail.com',
             rejectUnauthorized: false,
-            servername: 'smtp.gmail.com'
         }
     });
 };
