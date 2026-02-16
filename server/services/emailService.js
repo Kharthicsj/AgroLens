@@ -3,11 +3,16 @@ import nodemailer from 'nodemailer';
 // Create transporter - Simple configuration like reference code
 const createTransporter = () => {
     return nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
         auth: {
             user: process.env.NODEMAILER_MAIL,
             pass: process.env.NODEMAILER_APP_PASSWORD
         },
+        connectionTimeout: 20000,
+        greetingTimeout: 5000,
+        socketTimeout: 15000,
         tls: {
             rejectUnauthorized: false
         }
