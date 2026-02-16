@@ -3,24 +3,25 @@ import dns from 'dns';
 
 dns.setDefaultResultOrder('ipv4first');
 
-// Create transporter - Simple configuration like reference code
 const createTransporter = () => {
     return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
+        // Use the direct IPv4 for Google's SMTP to bypass DNS resolution issues on Render
+        host: '74.125.130.108',
         port: 465,
         secure: true,
         auth: {
             user: process.env.NODEMAILER_MAIL,
             pass: process.env.NODEMAILER_APP_PASSWORD
         },
+        // Force IPv4 and extend timeouts drastically for Render's networking
         addressFamily: 4,
-        connectionTimeout: 30000, // Increase to 30s
-        greetingTimeout: 10000,   // Increase to 10s
-        socketTimeout: 45000,     // Increase to 45s
-        addressFamily: 4,
+        connectionTimeout: 60000, // 60s
+        greetingTimeout: 30000,   // 30s
+        socketTimeout: 60000,     // 60s
         tls: {
+            // Servername is REQUIREMENT when using a direct IP to match the SSL cert
             servername: 'smtp.gmail.com',
-            rejectUnauthorized: false,
+            rejectUnauthorized: false
         }
     });
 };
