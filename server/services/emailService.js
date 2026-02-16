@@ -1,55 +1,17 @@
 import nodemailer from 'nodemailer';
 
-// Create transporter with multiple fallback configurations
+// Create transporter - Simple configuration like reference code
 const createTransporter = () => {
-    // Configuration 1: Port 587 with STARTTLS (most compatible with hosting platforms)
-    const config1 = {
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: process.env.NODEMAILER_MAIL,
-            pass: process.env.NODEMAILER_APP_PASSWORD
-        },
-        tls: {
-            ciphers: 'SSLv3',
-            rejectUnauthorized: false
-        },
-        connectionTimeout: 10000, // 10 seconds
-        greetingTimeout: 10000,
-        socketTimeout: 10000,
-        pool: true,
-        maxConnections: 5,
-        maxMessages: 10,
-        rateDelta: 1000,
-        rateLimit: 5
-    };
-
-    return nodemailer.createTransport(config1);
-};
-
-// Fallback transporter for port 465
-const createFallbackTransporter = () => {
-    const config2 = {
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, // use SSL
+    return nodemailer.createTransport({
+        service: 'gmail',
         auth: {
             user: process.env.NODEMAILER_MAIL,
             pass: process.env.NODEMAILER_APP_PASSWORD
         },
         tls: {
             rejectUnauthorized: false
-        },
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 10000,
-        pool: true,
-        maxConnections: 5,
-        maxMessages: 10
-    };
-
-    return nodemailer.createTransport(config2);
+        }
+    });
 };
 
 // Generate HTML email template
@@ -218,53 +180,37 @@ const generateOTPEmailTemplate = (otp, appName) => {
     `;
 };
 
-// Send OTP email with retry logic
+// Send OTP email
 export const sendOTPEmail = async (email, otp) => {
-    // Validate email and OTP
-    if (!email || !otp) {
-        throw new Error('Email and OTP are required');
-    }
-
-    // Check environment variables
-    if (!process.env.NODEMAILER_MAIL || !process.env.NODEMAILER_APP_PASSWORD) {
-        console.error('Missing email environment variables');
-        throw new Error('Email service not configured properly');
-    }
-
-    const appName = process.env.NODEMAILER_APP_NAME || 'AgroLens';
-    const mailOptions = {
-        from: `"${appName}" <${process.env.NODEMAILER_MAIL}>`,
-        to: email,
-        subject: `${appName} - Password Reset OTP`,
-        html: generateOTPEmailTemplate(otp, appName)
-    };
-
-    console.log('Sending OTP email to:', email);
-
-    // Try primary transporter (Port 587)
     try {
+        // Validate email and OTP
+        if (!email || !otp) {
+            throw new Error('Email and OTP are required');
+        }
+
+        // Check environment variables
+        if (!process.env.NODEMAILER_MAIL || !process.env.NODEMAILER_APP_PASSWORD) {
+            console.error('Missing email environment variables');
+            throw new Error('Email service not configured properly');
+        }
+
         const transporter = createTransporter();
-        console.log('Attempting with port 587 (STARTTLS)...');
+        const appName = process.env.NODEMAILER_APP_NAME || 'AgroLens';
+
+        const mailOptions = {
+            from: `"${appName}" <${process.env.NODEMAILER_MAIL}>`,
+            to: email,
+            subject: `${appName} - Password Reset OTP`,
+            html: generateOTPEmailTemplate(otp, appName)
+        };
+
+        console.log('Sending OTP email to:', email);
         const info = await transporter.sendMail(mailOptions);
-        console.log('OTP email sent successfully via port 587:', info.messageId);
-        transporter.close(); // Close connection pool
+        console.log('OTP email sent successfully:', info.messageId);
         return { success: true, messageId: info.messageId };
     } catch (error) {
-        console.log('Port 587 failed, trying fallback port 465 (SSL)...', error.message);
-        
-        // Try fallback transporter (Port 465)
-        try {
-            const fallbackTransporter = createFallbackTransporter();
-            const info = await fallbackTransporter.sendMail(mailOptions);
-            console.log('OTP email sent successfully via port 465:', info.messageId);
-            fallbackTransporter.close(); // Close connection pool
-            return { success: true, messageId: info.messageId };
-        } catch (fallbackError) {
-            console.error('Both port 587 and 465 failed');
-            console.error('Port 587 error:', error.code, error.message);
-            console.error('Port 465 error:', fallbackError.code, fallbackError.message);
-            throw new Error('Failed to send OTP email. Please check your network and try again.');
-        }
+        console.error('Error sending OTP email:', error);
+        throw new Error('Failed to send OTP email');
     }
 };
 
