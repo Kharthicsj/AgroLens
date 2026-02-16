@@ -1,120 +1,125 @@
 import nodemailer from 'nodemailer';
+import dns from 'dns';
+
+// Force IPv4 resolution globally
+dns.setDefaultResultOrder('ipv4first');
+
+// Gmail SMTP IPv4 addresses (hardcoded fallback to bypass DNS issues)
+const GMAIL_SMTP_IPS = [
+    '142.250.185.108',  // smtp.gmail.com IPv4
+    '142.250.185.109',
+    '74.125.130.108',
+    '64.233.184.108'
+];
 
 // Multiple transporter configurations to try in sequence
 const createTransporters = () => {
     const transporters = [];
 
-    // Configuration 1: OAuth2 with port 587 (STARTTLS)
-    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN) {
+    // Try with direct IP addresses first (most reliable on Render)
+    if (process.env.NODEMAILER_APP_PASSWORD) {
+        // Configuration 1: Direct IPv4 with port 587
+        GMAIL_SMTP_IPS.forEach((ip, index) => {
+            transporters.push({
+                name: `AppPass-587-IP${index + 1}`,
+                config: {
+                    host: ip,
+                    port: 587,
+                    secure: false,
+                    family: 4,
+                    auth: {
+                        user: process.env.NODEMAILER_MAIL,
+                        pass: process.env.NODEMAILER_APP_PASSWORD
+                    },
+                    connectionTimeout: 45000,
+                    greetingTimeout: 45000,
+                    socketTimeout: 45000,
+                    tls: {
+                        servername: 'smtp.gmail.com',  // Required for SSL cert validation with IP
+                        rejectUnauthorized: false,
+                        minVersion: 'TLSv1.2'
+                    },
+                    requireTLS: true
+                }
+            });
+        });
+
+        // Configuration 2: Direct IPv4 with port 465
         transporters.push({
-            name: 'OAuth2-587',
+            name: 'AppPass-465-DirectIP',
+            config: {
+                host: GMAIL_SMTP_IPS[0],
+                port: 465,
+                secure: true,
+                family: 4,
+                auth: {
+                    user: process.env.NODEMAILER_MAIL,
+                    pass: process.env.NODEMAILER_APP_PASSWORD
+                },
+                connectionTimeout: 45000,
+                greetingTimeout: 45000,
+                socketTimeout: 45000,
+                tls: {
+                    servername: 'smtp.gmail.com',
+                    rejectUnauthorized: false
+                }
+            }
+        });
+
+        // Configuration 3: Hostname with aggressive IPv4 forcing
+        transporters.push({
+            name: 'AppPass-587-Host',
             config: {
                 host: 'smtp.gmail.com',
                 port: 587,
                 secure: false,
                 family: 4,
                 auth: {
-                    type: 'OAuth2',
                     user: process.env.NODEMAILER_MAIL,
-                    clientId: process.env.GOOGLE_CLIENT_ID,
-                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                    refreshToken: process.env.GOOGLE_REFRESH_TOKEN
+                    pass: process.env.NODEMAILER_APP_PASSWORD
                 },
-                connectionTimeout: 30000,
-                greetingTimeout: 30000,
-                socketTimeout: 30000,
+                connectionTimeout: 45000,
+                greetingTimeout: 45000,
+                socketTimeout: 45000,
+                lookup: (hostname, options, callback) => {
+                    // Force IPv4 lookup
+                    dns.resolve4(hostname, (err, addresses) => {
+                        if (err) {
+                            callback(err);
+                        } else {
+                            callback(null, addresses[0], 4);
+                        }
+                    });
+                },
                 tls: {
                     rejectUnauthorized: false,
                     minVersion: 'TLSv1.2'
-                }
-            }
-        });
-
-        // Configuration 2: OAuth2 with port 465 (SSL)
-        transporters.push({
-            name: 'OAuth2-465',
-            config: {
-                host: 'smtp.gmail.com',
-                port: 465,
-                secure: true,
-                family: 4,
-                auth: {
-                    type: 'OAuth2',
-                    user: process.env.NODEMAILER_MAIL,
-                    clientId: process.env.GOOGLE_CLIENT_ID,
-                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                    refreshToken: process.env.GOOGLE_REFRESH_TOKEN
-                },
-                connectionTimeout: 30000,
-                greetingTimeout: 30000,
-                socketTimeout: 30000,
-                tls: {
-                    rejectUnauthorized: false
                 }
             }
         });
     }
 
-    // Configuration 3: App Password with port 587
-    if (process.env.NODEMAILER_APP_PASSWORD) {
+    // OAuth2 configurations with DNS override
+    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN) {
         transporters.push({
-            name: 'AppPass-587',
+            name: 'OAuth2-587',
             config: {
-                host: 'smtp.gmail.com',
+                host: GMAIL_SMTP_IPS[0],
                 port: 587,
                 secure: false,
                 family: 4,
                 auth: {
+                    type: 'OAuth2',
                     user: process.env.NODEMAILER_MAIL,
-                    pass: process.env.NODEMAILER_APP_PASSWORD
+                    clientId: process.env.GOOGLE_CLIENT_ID,
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                    refreshToken: process.env.GOOGLE_REFRESH_TOKEN
                 },
-                connectionTimeout: 30000,
-                greetingTimeout: 30000,
-                socketTimeout: 30000,
+                connectionTimeout: 45000,
+                greetingTimeout: 45000,
+                socketTimeout: 45000,
                 tls: {
-                    rejectUnauthorized: false,
-                    minVersion: 'TLSv1.2'
-                }
-            }
-        });
-
-        // Configuration 4: App Password with port 465
-        transporters.push({
-            name: 'AppPass-465',
-            config: {
-                host: 'smtp.gmail.com',
-                port: 465,
-                secure: true,
-                family: 4,
-                auth: {
-                    user: process.env.NODEMAILER_MAIL,
-                    pass: process.env.NODEMAILER_APP_PASSWORD
-                },
-                connectionTimeout: 30000,
-                greetingTimeout: 30000,
-                socketTimeout: 30000,
-                tls: {
-                    rejectUnauthorized: false
-                }
-            }
-        });
-
-        // Configuration 5: App Password with port 2525 (alternative port, less likely to be blocked)
-        transporters.push({
-            name: 'AppPass-2525',
-            config: {
-                host: 'smtp.gmail.com',
-                port: 2525,
-                secure: false,
-                family: 4,
-                auth: {
-                    user: process.env.NODEMAILER_MAIL,
-                    pass: process.env.NODEMAILER_APP_PASSWORD
-                },
-                connectionTimeout: 30000,
-                greetingTimeout: 30000,
-                socketTimeout: 30000,
-                tls: {
+                    servername: 'smtp.gmail.com',
                     rejectUnauthorized: false,
                     minVersion: 'TLSv1.2'
                 }
