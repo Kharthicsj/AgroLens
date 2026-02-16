@@ -12,6 +12,7 @@ const createTransporters = () => {
                 host: 'smtp.gmail.com',
                 port: 587,
                 secure: false,
+                family: 4,
                 auth: {
                     type: 'OAuth2',
                     user: process.env.NODEMAILER_MAIL,
@@ -36,6 +37,7 @@ const createTransporters = () => {
                 host: 'smtp.gmail.com',
                 port: 465,
                 secure: true,
+                family: 4,
                 auth: {
                     type: 'OAuth2',
                     user: process.env.NODEMAILER_MAIL,
@@ -61,6 +63,7 @@ const createTransporters = () => {
                 host: 'smtp.gmail.com',
                 port: 587,
                 secure: false,
+                family: 4,
                 auth: {
                     user: process.env.NODEMAILER_MAIL,
                     pass: process.env.NODEMAILER_APP_PASSWORD
@@ -82,6 +85,7 @@ const createTransporters = () => {
                 host: 'smtp.gmail.com',
                 port: 465,
                 secure: true,
+                family: 4,
                 auth: {
                     user: process.env.NODEMAILER_MAIL,
                     pass: process.env.NODEMAILER_APP_PASSWORD
@@ -102,6 +106,7 @@ const createTransporters = () => {
                 host: 'smtp.gmail.com',
                 port: 2525,
                 secure: false,
+                family: 4,
                 auth: {
                     user: process.env.NODEMAILER_MAIL,
                     pass: process.env.NODEMAILER_APP_PASSWORD
