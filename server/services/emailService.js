@@ -10,6 +10,7 @@ const createTransporter = () => {
             user: process.env.NODEMAILER_MAIL,
             pass: process.env.NODEMAILER_APP_PASSWORD
         },
+        addressFamily: 4,
         connectionTimeout: 30000, // Increase to 30s
         greetingTimeout: 10000,   // Increase to 10s
         socketTimeout: 45000,     // Increase to 45s
