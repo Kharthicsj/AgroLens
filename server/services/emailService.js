@@ -1,48 +1,63 @@
-const sendEmailViaResend = async (to, subject, html) => {
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+const sendEmailViaBrevo = async (to, subject, html) => {
+    const BREVO_API_KEY = process.env.BREVO_API_KEY;
+    const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || process.env.NODEMAILER_MAIL || 'noreply@agrolens.com';
+    const FROM_NAME = process.env.NODEMAILER_APP_NAME || 'AgroLens';
 
-    if (!RESEND_API_KEY) {
-        throw new Error('RESEND_API_KEY not configured. Please add it to your environment variables.');
+    if (!BREVO_API_KEY) {
+        throw new Error('BREVO_API_KEY not configured. Please add it to your environment variables.');
     }
 
     try {
-        const response = await fetch('https://api.resend.com/emails', {
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${RESEND_API_KEY}`,
-                'Content-Type': 'application/json'
+                'api-key': BREVO_API_KEY,
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
             },
             body: JSON.stringify({
-                from: FROM_EMAIL,
-                to: [to],
+                sender: {
+                    name: FROM_NAME,
+                    email: FROM_EMAIL
+                },
+                to: [
+                    {
+                        email: to
+                    }
+                ],
                 subject: subject,
-                html: html
+                htmlContent: html
             })
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
-            // Handle specific Resend API errors
+            const errorData = await response.json().catch(() => ({}));
+
+            // Handle specific Brevo API errors
             if (response.status === 401) {
-                throw new Error('Invalid Resend API key. Please check your RESEND_API_KEY.');
-            } else if (response.status === 422) {
-                throw new Error(`Email validation failed: ${data.message || 'Invalid email format'}`);
-            } else if (response.status === 429) {
-                throw new Error('Rate limit exceeded. Please try again later.');
+                throw new Error('Invalid Brevo API key. Please check your BREVO_API_KEY.');
+            } else if (response.status === 400) {
+                const errorMsg = errorData.message || 'Bad request';
+                if (errorMsg.includes('sender')) {
+                    throw new Error('Sender email not verified. Please verify your sender email in Brevo dashboard.');
+                }
+                throw new Error(`Email validation failed: ${errorMsg}`);
+            } else if (response.status === 402) {
+                throw new Error('Daily email limit exceeded. Please upgrade your Brevo plan or try again tomorrow.');
             } else {
-                throw new Error(data.message || `Resend API error: ${response.status}`);
+                throw new Error(errorData.message || `Brevo API error: ${response.status}`);
             }
         }
 
+        const data = await response.json();
+
         return {
             success: true,
-            messageId: data.id,
-            service: 'Resend'
+            messageId: data.messageId,
+            service: 'Brevo'
         };
     } catch (error) {
-        if (error.message.includes('fetch')) {
+        if (error.message.includes('fetch') || error.code === 'ENOTFOUND') {
             throw new Error('Network error. Unable to reach email service.');
         }
         throw error;
@@ -217,7 +232,8 @@ const generateOTPEmailTemplate = (otp, appName) => {
 
 /**
  * Send OTP email with proper error handling
- * Uses Resend API (HTTPS) - more reliable than SMTP on cloud platforms
+ * Uses Brevo API (HTTPS) - more reliable than SMTP on cloud platforms
+ * Can send to ANY email address (no domain verification needed)
  */
 export const sendOTPEmail = async (email, otp) => {
     // Validate inputs
@@ -238,20 +254,22 @@ export const sendOTPEmail = async (email, otp) => {
     console.log('📧 Sending OTP email to:', email);
 
     try {
-        const result = await sendEmailViaResend(email, subject, html);
-        console.log('✅ OTP email sent successfully via Resend');
+        const result = await sendEmailViaBrevo(email, subject, html);
+        console.log('✅ OTP email sent successfully via Brevo');
         console.log('   Message ID:', result.messageId);
         return result;
     } catch (error) {
         console.error('❌ Failed to send OTP email:', error.message);
 
         // Provide user-friendly error messages
-        if (error.message.includes('RESEND_API_KEY not configured')) {
+        if (error.message.includes('BREVO_API_KEY not configured')) {
             throw new Error('Email service not configured. Please contact support.');
+        } else if (error.message.includes('Sender email not verified')) {
+            throw new Error('Email service configuration error. Please contact support.');
         } else if (error.message.includes('Invalid email format')) {
             throw new Error('Invalid email address. Please check and try again.');
-        } else if (error.message.includes('Rate limit exceeded')) {
-            throw new Error('Too many requests. Please try again in a few minutes.');
+        } else if (error.message.includes('Daily email limit exceeded')) {
+            throw new Error('Service temporarily unavailable. Please try again later.');
         } else if (error.message.includes('Network error')) {
             throw new Error('Network error. Please check your internet connection and try again.');
         } else {
