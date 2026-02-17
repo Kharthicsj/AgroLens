@@ -215,7 +215,7 @@ const Settings = () => {
 	const showHelpSupport = () => {
 		Alert.alert(
 			t('helpSupport'),
-			`Need help with ${t('appName')}?\n\n📧 Email: support@agrolens.com\n📞 Phone: +1 (555) 123-4567\n🌐 Website: www.agrolens.com\n\nOur support team is available 24/7 to assist you.`,
+			`Need help with ${t('appName')}?\n\n📧 Email: kajiththangaraju@gmail.com\n📞 Phone: +91 9360894430\n\nOur support team is available 24/7 to assist you.`,
 			[{ text: 'OK' }]
 		);
 	};
