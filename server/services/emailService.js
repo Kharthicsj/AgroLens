@@ -1,50 +1,167 @@
-const sendEmailViaElasticEmail = async (to, subject, html) => {
-    const ELASTIC_API_KEY = process.env.ELASTIC_EMAIL_API_KEY;
-    const FROM_EMAIL = process.env.ELASTIC_FROM_EMAIL || process.env.NODEMAILER_MAIL || 'noreply@agrolens.com';
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * EMAIL SERVICE - TWILIO SENDGRID API
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * 📧 Setup Instructions - Get Your SendGrid API Key (Takes 5 minutes):
+ * ───────────────────────────────────────────────────────────────────────────
+ * 
+ * STEP 1: CREATE SENDGRID ACCOUNT
+ * ─────────────────────────────────
+ * • Visit: https://signup.sendgrid.com/
+ * • Sign up with your email (FREE account - no credit card required)
+ * • Verify your email address (check inbox/spam)
+ * 
+ * STEP 2: VERIFY SENDER IDENTITY (REQUIRED)
+ * ──────────────────────────────────────────
+ * • Login to SendGrid Dashboard: https://app.sendgrid.com/
+ * • Go to: Settings → Sender Authentication
+ *   URL: https://app.sendgrid.com/settings/sender_auth
+ * 
+ * Choose ONE option:
+ * 
+ *   Option A: Single Sender Verification (EASIEST - Recommended for testing)
+ *   ────────────────────────────────────────────────────────────────────────
+ *   • Click "Verify a Single Sender"
+ *   • Fill in the form:
+ *     - From Name: AgroLens
+ *     - From Email: your-email@gmail.com (use your actual email)
+ *     - Reply To: same as above
+ *     - Company details (can be anything for testing)
+ *   • Click "Create"
+ *   • Check your email and click the verification link
+ *   • ✅ Done! Your sender email is verified
+ * 
+ *   Option B: Domain Authentication (For production with custom domain)
+ *   ───────────────────────────────────────────────────────────────────
+ *   • Click "Authenticate Your Domain"
+ *   • Enter your domain (e.g., agrolens.com)
+ *   • Follow DNS setup instructions
+ *   • Wait for DNS propagation (can take 24-48 hours)
+ * 
+ * STEP 3: CREATE API KEY
+ * ──────────────────────
+ * • Go to: Settings → API Keys
+ *   URL: https://app.sendgrid.com/settings/api_keys
+ * • Click "Create API Key" button
+ * • Configure:
+ *   - Name: "AgroLens Production API"
+ *   - Permission Level: Choose "Restricted Access"
+ *   - Permissions: Enable only "Mail Send" → Full Access
+ * • Click "Create & View"
+ * • ⚠️  IMPORTANT: Copy the API key NOW (starts with "SG.")
+ *   You won't be able to see it again!
+ * 
+ * STEP 4: ADD TO YOUR .ENV FILE
+ * ──────────────────────────────
+ * Add these lines to your server/.env file:
+ * 
+ *   SENDGRID_API_KEY=SG.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ *   SENDGRID_FROM_EMAIL=your-verified-email@gmail.com
+ *   NODEMAILER_APP_NAME=AgroLens
+ * 
+ * Replace:
+ *   - SG.xxx... with your actual API key from Step 3
+ *   - your-verified-email@gmail.com with the email you verified in Step 2
+ * 
+ * STEP 5: TEST THE SETUP
+ * ──────────────────────
+ * • Restart your Node.js server
+ * • Try the password reset feature in your app
+ * • Check SendGrid Dashboard → Activity Feed to see email status
+ * 
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * 📊 SENDGRID FREE TIER LIMITS:
+ * • 100 emails per day (forever free)
+ * • Send to ANY email address
+ * • No domain required (with Single Sender Verification)
+ * • Works immediately after verification
+ * • Professional email delivery
+ * 
+ * 🔗 HELPFUL LINKS:
+ * • SendGrid Dashboard: https://app.sendgrid.com/
+ * • API Keys: https://app.sendgrid.com/settings/api_keys
+ * • Sender Authentication: https://app.sendgrid.com/settings/sender_auth
+ * • Activity Feed (Monitor emails): https://app.sendgrid.com/email_activity
+ * • API Documentation: https://docs.sendgrid.com/api-reference/mail-send/mail-send
+ * 
+ * ⚠️  TROUBLESHOOTING:
+ * • Error "Invalid API key": Check SENDGRID_API_KEY in .env file
+ * • Error "From email address issue": Verify sender identity in Step 2
+ * • Emails not arriving: Check Activity Feed in SendGrid Dashboard
+ * • Daily limit reached: Upgrade plan or wait 24 hours
+ * 
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+const sendEmailViaSendGrid = async (to, subject, html) => {
+    const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+    const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || process.env.NODEMAILER_MAIL || 'noreply@agrolens.com';
     const FROM_NAME = process.env.NODEMAILER_APP_NAME || 'AgroLens';
 
-    if (!ELASTIC_API_KEY) {
-        throw new Error('ELASTIC_EMAIL_API_KEY not configured. Please add it to your environment variables.');
+    if (!SENDGRID_API_KEY) {
+        throw new Error('SENDGRID_API_KEY not configured. Please add it to your environment variables.');
     }
 
     try {
-        const response = await fetch('https://api.elasticemail.com/v2/email/send', {
+        const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+                'Content-Type': 'application/json'
             },
-            body: new URLSearchParams({
-                apikey: ELASTIC_API_KEY,
-                from: FROM_EMAIL,
-                fromName: FROM_NAME,
-                to: to,
-                subject: subject,
-                bodyHtml: html,
-                isTransactional: 'true'
+            body: JSON.stringify({
+                personalizations: [
+                    {
+                        to: [{ email: to }],
+                        subject: subject
+                    }
+                ],
+                from: {
+                    email: FROM_EMAIL,
+                    name: FROM_NAME
+                },
+                content: [
+                    {
+                        type: 'text/html',
+                        value: html
+                    }
+                ]
             })
         });
 
-        const data = await response.json();
+        if (!response.ok) {
+            const errorData = await response.text();
+            let errorObj;
+            try {
+                errorObj = JSON.parse(errorData);
+            } catch {
+                errorObj = { errors: [{ message: errorData }] };
+            }
 
-        if (!response.ok || !data.success) {
-            // Handle Elastic Email API errors
-            const errorMsg = data.error || 'Unknown error';
-
-            if (errorMsg.includes('Unauthorized')) {
-                throw new Error('Invalid Elastic Email API key. Please check your ELASTIC_EMAIL_API_KEY.');
-            } else if (errorMsg.includes('not verified') || errorMsg.includes('sender')) {
-                throw new Error('Sender email not verified. Please verify your sender email in Elastic Email dashboard.');
-            } else if (errorMsg.includes('limit')) {
-                throw new Error('Daily email limit exceeded. Your free tier allows 100 emails/day.');
+            // Handle SendGrid API errors
+            if (response.status === 401) {
+                throw new Error('Invalid SendGrid API key. Please check your SENDGRID_API_KEY.');
+            } else if (response.status === 403) {
+                throw new Error('SendGrid API access forbidden. Please check your API key permissions.');
+            } else if (response.status === 400) {
+                const errorMsg = errorObj.errors?.[0]?.message || 'Bad request';
+                if (errorMsg.includes('from email') || errorMsg.includes('sender')) {
+                    throw new Error('From email address issue. Please verify your sender identity in SendGrid dashboard.');
+                }
+                throw new Error(`SendGrid validation error: ${errorMsg}`);
             } else {
-                throw new Error(`Elastic Email API error: ${errorMsg}`);
+                const errorMsg = errorObj.errors?.[0]?.message || 'Unknown error';
+                throw new Error(`SendGrid API error: ${errorMsg}`);
             }
         }
 
+        // SendGrid returns 202 on success with empty body
         return {
             success: true,
-            messageId: data.data.messageid || data.data.transactionid,
-            service: 'ElasticEmail'
+            messageId: response.headers.get('X-Message-Id') || 'sent',
+            service: 'SendGrid'
         };
     } catch (error) {
         if (error.message.includes('fetch') || error.code === 'ENOTFOUND') {
@@ -222,7 +339,7 @@ const generateOTPEmailTemplate = (otp, appName) => {
 
 /**
  * Send OTP email with proper error handling
- * Uses Elastic Email API (HTTPS) - reliable and works immediately
+ * Uses SendGrid API (HTTPS) - reliable and works immediately, sends to any email
  */
 export const sendOTPEmail = async (email, otp) => {
     // Validate inputs
@@ -243,17 +360,17 @@ export const sendOTPEmail = async (email, otp) => {
     console.log('📧 Sending OTP email to:', email);
 
     try {
-        const result = await sendEmailViaElasticEmail(email, subject, html);
-        console.log('✅ OTP email sent successfully via Elastic Email');
+        const result = await sendEmailViaSendGrid(email, subject, html);
+        console.log('✅ OTP email sent successfully via SendGrid');
         console.log('   Message ID:', result.messageId);
         return result;
     } catch (error) {
         console.error('❌ Failed to send OTP email:', error.message);
 
         // Provide user-friendly error messages
-        if (error.message.includes('ELASTIC_EMAIL_API_KEY not configured')) {
+        if (error.message.includes('SENDGRID_API_KEY not configured')) {
             throw new Error('Email service not configured. Please contact support.');
-        } else if (error.message.includes('Sender email not verified')) {
+        } else if (error.message.includes('From email address issue') || error.message.includes('sender identity')) {
             throw new Error('Email service configuration error. Please contact support.');
         } else if (error.message.includes('Invalid email format')) {
             throw new Error('Invalid email address. Please check and try again.');
